@@ -1,0 +1,50 @@
+<svg width="1200" height="360" viewBox="0 0 1200 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1F3A"/>
+      <stop offset="0.52" stop-color="#123C70"/>
+      <stop offset="1" stop-color="#1769AA"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="680" y1="80" x2="1070" y2="290" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7DD3FC"/>
+      <stop offset="1" stop-color="#2F80ED"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#041225" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="360" rx="24" fill="url(#bg)"/>
+  <circle cx="1080" cy="-10" r="220" fill="#2F80ED" fill-opacity="0.12"/>
+  <circle cx="1130" cy="315" r="180" fill="#7DD3FC" fill-opacity="0.09"/>
+  <path d="M0 292C210 235 330 344 548 278C756 215 876 80 1200 122" stroke="#7DD3FC" stroke-opacity="0.16" stroke-width="2"/>
+  <path d="M0 314C220 255 340 358 566 291C792 224 900 112 1200 148" stroke="#7DD3FC" stroke-opacity="0.10" stroke-width="2"/>
+
+  <g filter="url(#shadow)">
+    <rect x="705" y="65" width="398" height="228" rx="18" fill="#07172C" fill-opacity="0.82" stroke="#7DD3FC" stroke-opacity="0.45"/>
+    <rect x="735" y="99" width="104" height="34" rx="17" fill="#2F80ED" fill-opacity="0.22" stroke="#7DD3FC" stroke-opacity="0.52"/>
+    <text x="787" y="121" fill="#BAE6FD" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" text-anchor="middle">START</text>
+
+    <path d="M839 116H872" stroke="#7DD3FC" stroke-width="2" stroke-linecap="round"/>
+    <path d="M866 110L875 116L866 122" stroke="#7DD3FC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="882" y="99" width="154" height="34" rx="17" fill="#2F80ED" fill-opacity="0.22" stroke="#7DD3FC" stroke-opacity="0.52"/>
+    <text x="959" y="121" fill="#BAE6FD" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" text-anchor="middle">DESIGN</text>
+
+    <path d="M959 137V157" stroke="#7DD3FC" stroke-width="2" stroke-linecap="round"/>
+    <path d="M953 151L959 160L965 151" stroke="#7DD3FC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="786" y="165" width="218" height="34" rx="17" fill="#2F80ED" fill-opacity="0.22" stroke="#7DD3FC" stroke-opacity="0.52"/>
+    <text x="895" y="187" fill="#BAE6FD" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" text-anchor="middle">BUILD · TEST · REVIEW</text>
+
+    <path d="M895 203V223" stroke="#7DD3FC" stroke-width="2" stroke-linecap="round"/>
+    <path d="M889 217L895 226L901 217" stroke="#7DD3FC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="829" y="231" width="132" height="34" rx="17" fill="url(#accent)"/>
+    <text x="895" y="253" fill="#07172C" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="800" text-anchor="middle">SHIP</text>
+  </g>
+
+  <text x="70" y="116" fill="#BAE6FD" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" letter-spacing="4">AI CODING WORKFLOW</text>
+  <text x="70" y="177" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="800">zengbohan-skill</text>
+  <text x="72" y="219" fill="#BFDBFE" font-family="Arial, Helvetica, sans-serif" font-size="21">A practical two-tier configuration for</text>
+  <text x="72" y="250" fill="#BFDBFE" font-family="Arial, Helvetica, sans-serif" font-size="21">high-quality AI-assisted development.</text>
+  <rect x="72" y="278" width="362" height="2" rx="1" fill="#7DD3FC" fill-opacity="0.7"/>
+  <text x="72" y="310" fill="#93C5FD" font-family="Arial, Helvetica, sans-serif" font-size="15" letter-spacing="1.2">GRILL · SPEC · TICKETS · IMPLEMENT · REVIEW</text>
+</svg>
