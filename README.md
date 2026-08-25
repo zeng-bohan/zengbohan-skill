@@ -5,11 +5,14 @@
 <h1 align="center">zengbohan-skill</h1>
 
 <p align="center">
-  A focused workflow for disciplined AI-assisted software development in ZCode.
+  A self-contained, five-stage development pipeline for AI coding agents — one folder, zero companion skills.
 </p>
 
 <p align="center">
-  <a href="zengbohan-skill/SKILL.md"><img src="https://img.shields.io/badge/ZCode-Skill-2F80ED?style=flat-square" alt="ZCode Skill" /></a>
+  <a href="zengbohan-skill/SKILL.md"><img src="https://img.shields.io/badge/Agent-Skills-2F80ED?style=flat-square" alt="Agent Skills" /></a>
+  <img src="https://img.shields.io/badge/ZCode-supported-1769AA?style=flat-square" alt="ZCode" />
+  <img src="https://img.shields.io/badge/Claude_Code-supported-5C6BC0?style=flat-square" alt="Claude Code" />
+  <img src="https://img.shields.io/badge/Codex-via_AGENTS.md-F2994A?style=flat-square" alt="Codex" />
   <img src="https://img.shields.io/badge/Workflow-5%20stages-1769AA?style=flat-square" alt="Five stages" />
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-4EB1BA?style=flat-square" alt="MIT License" /></a>
 </p>
@@ -18,85 +21,119 @@
 
 `zengbohan-skill` is a single entry point for development work. It keeps AI-assisted changes grounded in explicit decisions, small deliverables, tests, and review.
 
-The default path is:
+The pipeline is:
 
-1. **Grill-With-Docs** - clarify the problem and settle the design.
-2. **to-spec** - turn the decisions into an implementation-ready specification.
-3. **to-tickets** - split the specification into independently verifiable tickets.
-4. **implement** - build the tickets with tests.
-5. **code-review** - review the result against project standards and the specification.
+| Stage | Definition | What happens |
+| --- | --- | --- |
+| 0 | `stages/setup-matt-pocock-skills/` | First run only: configure the project's issue tracker and doc layout |
+| 1 | `stages/grill-with-docs/` | Interview you in rounds until every design decision is settled; leaves a glossary (`CONTEXT.md`) and ADRs behind |
+| 2 | `stages/to-spec/` | Synthesize the decisions into a spec and publish it to the tracker |
+| 3 | `stages/to-tickets/` | Split the spec into independently verifiable tickets with blocking edges; you approve the breakdown |
+| 4 | `stages/implement/` + `stages/tdd/` | Build each ticket test-first, one fresh context window per ticket, one commit each |
+| 5 | `stages/code-review/` | Two-axis review (coding standards + spec fidelity); fix findings until clean |
+
+The entry file (`SKILL.md`) drives each stage by reading its definition straight from `stages/`. Stage files are ordinary Markdown documents, not registered skills.
+
+## Self-contained by design
+
+Earlier releases required installing ten companion skills alongside this one. They are now **embedded under `stages/`**, so installing this single folder is enough on any harness. Nothing else to install, nothing to fall out of sync.
 
 ## Install
 
-Install the skill into your user-level ZCode skills directory:
+The skill follows the [Agent Skills](https://agentskills.io) convention: a folder whose `SKILL.md` carries YAML frontmatter (`name`, `description`). Harnesses that scan a skills directory discover it automatically.
+
+### ZCode
 
 ```bash
 git clone https://github.com/zengbohan1/zengbohan-skill.git
 cp -R zengbohan-skill/zengbohan-skill ~/.zcode/skills/
 ```
 
-The skill definition is loaded from:
+Loaded from `~/.zcode/skills/zengbohan-skill/SKILL.md`.
 
-```text
-~/.zcode/skills/zengbohan-skill/SKILL.md
+### Claude Code
+
+```bash
+git clone https://github.com/zengbohan1/zengbohan-skill.git
+mkdir -p ~/.claude/skills
+cp -R zengbohan-skill/zengbohan-skill ~/.claude/skills/
 ```
 
-Restart or refresh ZCode after installation if the skill does not appear immediately.
+Loaded from `~/.claude/skills/zengbohan-skill/SKILL.md`.
+
+### Codex CLI
+
+Codex has no native skills directory, so wire it in through `AGENTS.md`:
+
+```bash
+git clone https://github.com/zengbohan1/zengbohan-skill.git ~/.codex/zengbohan-skill
+```
+
+Then add this block to `~/.codex/AGENTS.md` (or the repo-level `AGENTS.md`):
+
+```markdown
+## Development workflow
+
+For every non-trivial development task, first read ~/.codex/zengbohan-skill/SKILL.md
+and follow its five-stage pipeline exactly, loading the stage files it references
+under stages/.
+```
+
+### Any other harness
+
+The skill is plain Markdown plus supporting files. Clone it anywhere your agent can read, then point your harness's always-on instruction file at the entry definition:
+
+```markdown
+Before any development task, read <path-to>/zengbohan-skill/SKILL.md and follow it.
+```
+
+This works for Cursor rules, Windsurf, Cline, opencode, or anything that can inject instructions.
+
+> **Windows:** replace `~/` with `%USERPROFILE%\` in the paths above.
+
+Restart or refresh your harness after installation if the skill does not appear immediately.
 
 ## Use
 
-Start a normal feature or refactor with:
-
-```text
-/zengbohan-skill <describe the development task>
-```
-
-Examples:
+Invoke it explicitly:
 
 ```text
 /zengbohan-skill Add citation tracing to the RAG answer pipeline
-/zengbohan-skill Add timeout handling for tool calls in agentflow
 ```
 
-The skill pauses at decision points that require your input. It keeps design, specification, ticket approval, testing, and review in the same development loop.
+…or just describe the task naturally — the description matches phrases like "develop", "implement", "let's build", 开发 / 实现 / 开始做 / 按流程走:
 
-## Optional quality checks
+```text
+按流程走，给导出功能加一个 CSV 后端
+```
 
-Use these alongside the main workflow when the problem calls for them:
-
-| Situation | Use |
-| --- | --- |
-| Architecture drift, unclear module boundaries, hard-to-test code | `/improve-codebase-architecture` |
-| Hard bug, intermittent failure, or performance regression | `/diagnosing-bugs` |
-
-These are additions to the main workflow, not replacements for it.
-
-## Required companion skills
-
-The entry point coordinates these skills:
-
-- `ask-matt`
-- `grill-with-docs` and its `grilling` / `domain-modeling` support
-- `to-spec`
-- `to-tickets`
-- `implement` and `tdd`
-- `code-review`
-- `setup-matt-pocock-skills` for first-time project setup
-
-Install the companion skills separately in environments that do not already provide them.
+You stay in control at the decision points: interview rounds pause for your answers, test seams need your sign-off, and the ticket breakdown is published only after you approve it. Stages 1–3 share one context window so the design thinking stays connected; stage 4 restarts fresh per ticket so implementation never drowns in interview history.
 
 ## Repository layout
 
 ```text
-zengbohan-skill/
+zengbohan-skill/          ← this repo
 ├── README.md
 ├── LICENSE
 ├── docs/
 │   └── banner.svg
-└── zengbohan-skill/
-    ├── SKILL.md
-    └── cover.jpg
+└── zengbohan-skill/      ← copy THIS folder into your skills directory
+    ├── SKILL.md          ← entry point — the only registered skill
+    ├── cover.jpg
+    └── stages/           ← ten embedded stage definitions (plain docs, not registered skills)
+        ├── ask-matt/
+        ├── setup-matt-pocock-skills/
+        ├── grill-with-docs/
+        ├── grilling/
+        ├── domain-modeling/
+        ├── to-spec/
+        ├── to-tickets/
+        ├── implement/
+        ├── tdd/
+        └── code-review/
 ```
+
+Only the top-level `SKILL.md` is named `SKILL.md`, so harnesses register exactly one skill. Each stage folder keeps its own reference documents (`PHASE-BOUNDARIES.md`, `ADR-FORMAT.md`, `tests.md`, tracker templates, …), which the pipeline reads when the corresponding stage runs.
 
 ## Design principles
 
@@ -104,6 +141,10 @@ zengbohan-skill/
 - **Ship vertical slices.** Every ticket should be independently verifiable.
 - **Test the seam.** Prefer tests that exercise the real boundary and failure mode.
 - **Add complexity when evidence requires it.** Use architecture and diagnosis tools when the codebase earns them.
+
+## Credits
+
+The ten embedded stages are consolidated from Matt Pocock's engineering skill suite (`grilling`, `to-spec`, `to-tickets`, `implement`, `tdd`, `code-review`, `ask-matt`, `domain-modeling`, and friends). Packaging, consolidation, and the self-contained single-entry design by Bohan Zeng.
 
 ## License
 
