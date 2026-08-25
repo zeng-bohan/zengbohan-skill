@@ -1,71 +1,70 @@
 ---
 name: zengbohan-skill
-description: Workflow configuration guide for the Matt Pocock skill ecosystem. Recommends a two-tier setup: a universal minimal loop (Grill-With-Docs -> /to-spec -> /to-tickets -> /implement -> /code-review) for 90% of developers, plus an advanced tier that adds the two ace skills /improve-codebase-architecture and /diagnose for complex, quality-focused projects. Use when the user asks how to configure their AI coding workflow, wants a recommended skill setup, or mentions 配置 / 流程 / 技能组合 / workflow / 技能库.
+description: "The single entry point for every development task. Drives any new or continued implementation through the fixed five-stage pipeline: Grill-With-Docs (interview until the design tree is settled) -> to-spec (synthesize the spec) -> to-tickets (split into tracer-bullet tickets with blocking edges) -> implement (build via tdd) -> code-review (two-axis review). Use whenever the user starts a development task, wants to implement a feature, says 开发/实现/开始做/按流程走, or continues an in-progress build — even if they never say 'workflow'. This is the mandatory pipeline for all dev tasks; do not invent an ad-hoc process instead."
 ---
 
-# 曾波涵 Skill（Zengbohan Skill）
+# zengbohan-skill
 
-一套基于 Matt Pocock 技能库的 workflow 配置方案。按项目复杂度分两档，按需取用。
+The mandatory pipeline for every development task. Walk the work through five stages in order, one unbroken banner at a time. Do not skip stages, do not merge stages, and do not treat an unpublished draft as a settled output.
 
-原始配置图见 `cover.jpg`。
+This skill is self-contained: every stage definition it drives lives under `stages/` in this folder. It has no external skill dependencies — install this one folder and nothing else.
 
-## 一、通用极简配置（90% 开发者适用）
+Phase-break and context rules follow ask-matt (see `stages/ask-matt/ask-matt.md`): keep stages 1–3 in one context window so the interview, spec, and tickets build on the same thinking; each `/implement` then starts fresh from its ticket.
 
-大多数开发任务走这一档。核心闭环只有五步：
+## Stage 0 — Precondition check (once)
 
-```
-Grill-With-Docs → /to-spec → /to-tickets → /implement → /code-review
-```
+Before the first stage, confirm the issue tracker is configured for this repo:
 
-| 步骤 | 技能 | 作用 |
-| --- | --- | --- |
-| 1 | `Grill-With-Docs` | 需求访谈，把设计树问到收敛，留一份纸面记录 |
-| 2 | `/to-spec` | 把对话与已定设计综合成 spec |
-| 3 | `/to-tickets` | 把 spec 拆成带阻塞边的 tracer-bullet ticket |
-| 4 | `/implement` | 按 ticket 逐个实现（内嵌 `/tdd`） |
-| 5 | `/code-review` | 沿 Standards / Spec 两轴复核改动 |
+- If `docs/agents/issue-tracker.md` exists, read it and proceed.
+- If it is missing, run setup-matt-pocock-skills (read `stages/setup-matt-pocock-skills/setup-matt-pocock-skills.md`) to configure the issue tracker, triage label vocabulary, and domain doc layout. Confirm each configuration choice with the user before writing.
 
-**取用原则**：无脑从第一档开始。它覆盖 90% 的开发者和 90% 的项目。
+## Stage 1 — Grill-With-Docs
 
-## 二、进阶增强配置（适合复杂项目、注重代码质量）
+Sharpen the idea into a settled design tree, leaving a paper trail.
 
-在通用流程基础上，**保留两个王牌技能**，补齐短板。
+- Load `stages/grill-with-docs/grill-with-docs.md` (which runs `stages/grilling/grilling.md` and `stages/domain-modeling/domain-modeling.md`).
+- Interview the user in rounds. Each round, ask the whole frontier — every decision whose prerequisites are settled — numbered, each with a recommended answer. Then **stop and wait** for the answers before the next round.
+- Facts are your job, never the user's: when a frontier question needs an answer from the environment (filesystem, tools, docs, DB), look it up or dispatch a sub-agent — don't put it to the user. Only the *decisions* go to the user.
+- Resolve terms into `CONTEXT.md` and record hard-to-reverse choices as ADRs as they crystallise (see `stages/domain-modeling/domain-modeling.md`).
+- **Stage exit:** the frontier is empty — every branch visited, nothing silently assumed. Confirm with the user that you have a shared understanding before moving on.
 
-### 王牌 1：`/improve-codebase-architecture`
+## Stage 2 — to-spec
 
-> 系统性扫描代码库，挖掘架构隐患、模块耦合、可测试性问题，生成可视化架构报告。
+Turn the conversation and settled design into a spec — synthesis, not a new interview.
 
-- 系统性扫描代码库
-- 挖掘架构隐患、模块耦合、可测试性问题
-- 生成可视化架构报告（HTML + Mermaid，带 before/after 深化候选与推荐强度）
+- Load `stages/to-spec/to-spec.md`.
+- Use the project's domain glossary vocabulary from `CONTEXT.md`; respect ADRs in the area.
+- Sketch the seams at which the feature will be tested (prefer existing seams, highest seam possible, fewest total). **Check with the user that these seams match their expectations.**
+- Write the spec using the template in `stages/to-spec/to-spec.md` (Problem Statement, Solution, User Stories, Implementation Decisions, Testing Decisions, Out of Scope, Further Notes). No file paths or code snippets unless a prototype encoded a decision precisely.
+- Publish it to the issue tracker with the `ready-for-agent` label (per `docs/agents/issue-tracker.md`).
+- **Stage exit:** spec published and user has signed off on the seams.
 
-**何时启用**：代码库增长快、测试越来越难写、或某个 bug 指向了纠缠的架构。
+## Stage 3 — to-tickets
 
-### 王牌 2：`/diagnose`
+Break the spec into tracer-bullet vertical slices, each declaring its blocking edges.
 
-> 标准化六步调试闭环（复现 → 最小化 → 假设 → 仪器化 → 修复 → 回归），杜绝调试跳步、漏测问题。
+- Load `stages/to-tickets/to-tickets.md`.
+- Each ticket cuts a narrow but complete path through every layer; a completed ticket is demoable/verifiable on its own; each fits in a single fresh context window. Sequence wide refactors as expand–contract, not as a vertical slice.
+- **Quiz the user**: present the breakdown as a numbered list (Title / Blocked by / What it delivers) and ask whether granularity feels right, whether blocking edges are correct, and whether any should merge or split. Iterate until approved.
+- Publish to the tracker in dependency order (blockers first), using the tracker's blocking mechanism (local `.scratch/<feature-slug>/issues/NN-*.md` files, or native links on a real tracker). Apply the `ready-for-agent` label.
+- **Stage exit:** tickets approved by the user and published.
 
-```
-复现 → 最小化 → 假设 → 仪器化 → 修复 → 回归
-```
+## Stage 4 — implement
 
-| 阶段 | 含义 |
-| --- | --- |
-| 复现 | 建立紧的、能报红的反馈环（先于任何假设） |
-| 最小化 | 把 repro 缩到仍报红的最小场景 |
-| 假设 | 先生成 3–5 个可证伪的 ranked 假设，再动手测 |
-| 仪器化 | 每次只动一个变量，对应一个预测 |
-| 修复 | 先写回归测试，再改代码 |
-| 回归 | 重跑原始环，确认无回归 |
+Build each ticket.
 
-**何时启用**：硬 bug、偶发失败、性能回归——任何跳一步就会漏测的场景。
+- Load `stages/implement/implement.md`.
+- Work the frontier: any ticket whose blockers are all done. Pick up tickets one at a time, each in a fresh context window seeded from the ticket file.
+- Use TDD at the pre-agreed seams (read `stages/tdd/tdd.md`), one red-green slice at a time. Run typechecking and single-test-file regularly; run the full test suite once at the end.
+- Commit each completed ticket to the current branch.
+- **Stage exit:** all tickets built, committed, full test suite green.
 
-## 三、怎么选
+## Stage 5 — code-review
 
-- **默认走第一档**（通用极简配置）。
-- **遇到以下情况上第二档**（进阶增强配置）：
-  - 项目规模大、代码质量要求高，或通用流程已经推不动；
-  - 架构在漂移 → 用 `/improve-codebase-architecture`；
-  - 堆着难啃的 bug → 用 `/diagnose`。
+Review the whole change along two independent axes.
 
-两个王牌技能与通用流程是**叠加关系**，不是替换关系——先跑完通用闭环，再按需插入。
+- Load `stages/code-review/code-review.md`.
+- Pin the fixed point (branch start / merge-base / pre-feature commit), confirm it resolves and the diff is non-empty.
+- Point the Standards sub-agent at any documented coding standards plus the smell baseline from `stages/code-review/code-review.md`; point the Spec sub-agent at the spec/tickets. Run them in parallel, then aggregate verbatim under `## Standards` and `## Spec`.
+- Fix any findings, re-run the review until both axes are clean.
+- **Stage exit:** both axes report no blocking findings and the user is happy to hand off.
