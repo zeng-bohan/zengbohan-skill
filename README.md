@@ -17,6 +17,10 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-4EB1BA?style=flat-square" alt="MIT License" /></a>
 </p>
 
+<p align="center">
+  English | <a href="README.zh-CN.md">简体中文</a>
+</p>
+
 ## What it does
 
 `zengbohan-skill` is a single entry point for development work. It keeps AI-assisted changes grounded in explicit decisions, small deliverables, tests, and review.
