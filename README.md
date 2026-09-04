@@ -49,7 +49,7 @@ The skill follows the [Agent Skills](https://agentskills.io) convention: a folde
 ### ZCode
 
 ```bash
-git clone https://github.com/zengbohan1/zengbohan-skill.git
+git clone https://github.com/zeng-bohan/zengbohan-skill.git
 cp -R zengbohan-skill/zengbohan-skill ~/.zcode/skills/
 ```
 
@@ -58,7 +58,7 @@ Loaded from `~/.zcode/skills/zengbohan-skill/SKILL.md`.
 ### Claude Code
 
 ```bash
-git clone https://github.com/zengbohan1/zengbohan-skill.git
+git clone https://github.com/zeng-bohan/zengbohan-skill.git
 mkdir -p ~/.claude/skills
 cp -R zengbohan-skill/zengbohan-skill ~/.claude/skills/
 ```
@@ -70,7 +70,7 @@ Loaded from `~/.claude/skills/zengbohan-skill/SKILL.md`.
 Codex has no native skills directory, so wire it in through `AGENTS.md`:
 
 ```bash
-git clone https://github.com/zengbohan1/zengbohan-skill.git ~/.codex/zengbohan-skill
+git clone https://github.com/zeng-bohan/zengbohan-skill.git ~/.codex/zengbohan-skill
 ```
 
 Then add this block to `~/.codex/AGENTS.md` (or the repo-level `AGENTS.md`):

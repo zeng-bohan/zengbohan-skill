@@ -41,7 +41,7 @@
 ### ZCode
 
 ```bash
-git clone https://github.com/zengbohan1/zengbohan-skill.git
+git clone https://github.com/zeng-bohan/zengbohan-skill.git
 cp -R zengbohan-skill/zengbohan-skill ~/.zcode/skills/
 ```
 
@@ -50,7 +50,7 @@ cp -R zengbohan-skill/zengbohan-skill ~/.zcode/skills/
 ### Claude Code
 
 ```bash
-git clone https://github.com/zengbohan1/zengbohan-skill.git
+git clone https://github.com/zeng-bohan/zengbohan-skill.git
 mkdir -p ~/.claude/skills
 cp -R zengbohan-skill/zengbohan-skill ~/.claude/skills/
 ```
@@ -62,7 +62,7 @@ cp -R zengbohan-skill/zengbohan-skill ~/.claude/skills/
 Codex 没有原生技能目录，通过 `AGENTS.md` 接入：
 
 ```bash
-git clone https://github.com/zengbohan1/zengbohan-skill.git ~/.codex/zengbohan-skill
+git clone https://github.com/zeng-bohan/zengbohan-skill.git ~/.codex/zengbohan-skill
 ```
 
 然后把这段加进 `~/.codex/AGENTS.md`（或仓库级 `AGENTS.md`）：
