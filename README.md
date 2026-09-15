@@ -9,11 +9,6 @@
 </p>
 
 <p align="center">
-  <a href="zengbohan-skill/SKILL.md"><img src="https://img.shields.io/badge/Agent-Skills-2F80ED?style=flat-square" alt="Agent Skills" /></a>
-  <img src="https://img.shields.io/badge/ZCode-supported-1769AA?style=flat-square" alt="ZCode" />
-  <img src="https://img.shields.io/badge/Claude_Code-supported-5C6BC0?style=flat-square" alt="Claude Code" />
-  <img src="https://img.shields.io/badge/Codex-via_AGENTS.md-F2994A?style=flat-square" alt="Codex" />
-  <img src="https://img.shields.io/badge/Workflow-5%20stages-1769AA?style=flat-square" alt="Five stages" />
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-4EB1BA?style=flat-square" alt="MIT License" /></a>
 </p>
 
