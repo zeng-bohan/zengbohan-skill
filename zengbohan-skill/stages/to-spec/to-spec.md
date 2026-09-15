@@ -30,7 +30,7 @@ The solution to the problem, from the user's perspective.
 
 ## User Stories
 
-A LONG, numbered list of user stories. Each user story should be in the format of:
+A numbered list of user stories. Each user story should be in the format of:
 
 1. As an <actor>, I want a <feature>, so that <benefit>
 
@@ -38,7 +38,7 @@ A LONG, numbered list of user stories. Each user story should be in the format o
 1. As a mobile bank customer, I want to see balance on my accounts, so that I can make better informed decisions about my spending
 </user-story-example>
 
-This list of user stories should be extremely extensive and cover all aspects of the feature.
+Cover every aspect the feature actually touches — long for a large feature, a handful of stories for a small one. No filler.
 
 ## Implementation Decisions
 
