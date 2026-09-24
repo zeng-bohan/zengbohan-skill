@@ -34,9 +34,9 @@
 | --- | --- | --- |
 | 0（按需） | `stages/setup.md` | 首次需要 tracker 产物时：配置 issue tracker 与文档布局 |
 | 1 | `stages/interview.md` | 设计树面试；留下术语表（`CONTEXT.md`）和 ADR |
-| 2 | `stages/plan.md` | 把决策综合成 plan（一页纸，或 spec + tickets） |
-| 3 | `stages/implement.md` | 按预先约定的 seam 以 TDD 构建每个 ticket，每个一提交 |
-| 4 | `stages/code-review.md` | 双轴评审（编码规范 + spec 忠实度） |
+| 2 | `stages/plan.md` | 把决策综合成 plan 文件（问题 + stories + seams + 带 `Verify:` 的 tickets），full 档则发布 spec + tickets |
+| 3 | `stages/implement.md` | 按预先约定的 seam 以 TDD 构建每个 ticket，每个一提交，边做边勾 plan |
+| 4 | `stages/code-review.md` | 双轴评审（编码规范 + spec 忠实度），末尾产出交给你签字的验收清单 |
 
 入口文件 `SKILL.md` 只负责分档和路由；规则只住在 `stages/` 里。stage 文件是普通 Markdown 文档，不是注册技能。
 

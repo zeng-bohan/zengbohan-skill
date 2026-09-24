@@ -11,12 +11,12 @@ Implement the work described by the plan or tickets. **Never reopen the plan** �
 
 Work the **frontier**: any ticket whose blockers are all done, in dependency order.
 
-- **Default: this session, ticket by ticket.** Pick up the next ticket, build it, commit it, move on. Context from earlier tickets is an asset — it holds the reasoning — not clutter.
+- **Default: this session, ticket by ticket.** Work the frontier — standard: the first unchecked ticket in the plan file whose blockers are all ticked; full: any open ticket with no open blockers. Build it, commit it, move on. Context from earlier tickets is an asset — it holds the reasoning — not clutter. The marks are also the resume point: a fresh session reads the same plan file or tracker and picks up exactly where the last one left off.
 - **Split only when needed** (see `../references/PHASE-BOUNDARIES.md`): if the context approaches the smart zone mid-build, finish the current ticket, commit, then hand the next ticket to a fresh session seeded from its ticket file, or dispatch it to a sub-agent. Tickets are self-contained by design, which is what makes this safe. A ticket that can run unattended is a good sub-agent candidate.
 
 ## The build loop
 
-Use TDD where it fits, at the pre-agreed seams (rules below). For tickets where TDD doesn't apply (pure docs/config), say so in the ticket instead of forcing tests. Run typechecking and single test files regularly; run the full test suite once at the end of each ticket. Commit each completed ticket to the current branch.
+Use TDD where it fits, at the pre-agreed seams (rules below). For tickets where TDD doesn't apply (pure docs/config), say so in the ticket instead of forcing tests. Run typechecking and single test files regularly; run the full test suite once at the end of each ticket. Commit each completed ticket to the current branch, **then mark it done** — tick its checkbox in the plan file (standard), close its issue (real tracker), or set `Status: done` in its ticket file (local-markdown tracker). An unmarked ticket looks unfinished to the next session; the marks are what make resume work.
 
 ## TDD — the red → green loop
 

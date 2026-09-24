@@ -34,8 +34,8 @@ Only the full tier needs tracker artifacts, so setup runs lazily: the first time
 Run them in order. Each stage file carries its own rules; the line here is its exit condition only.
 
 1. **interview** — load `stages/interview.md`. Sharpen the idea into a settled design tree, leaving `CONTEXT.md` and ADRs behind. *Exit:* standard — the top-level decisions and their immediate consequences are settled; full — the frontier is empty and the user confirms shared understanding.
-2. **plan** — load `stages/plan.md`. Synthesize (no new interview) into a plan: decisions, seams, tickets. *Exit:* standard — the user approves the one-pager (one gate covering seams, granularity, and edges in a single exchange); full — the spec (seams included) is confirmed and published, then the ticket breakdown is approved and published.
-3. **implement** — load `stages/implement.md`. Build the tickets test-first at the pre-agreed seams. *Exit:* all tickets built and committed, full test suite green.
-4. **code-review** — load `stages/code-review.md`. Two-axis review (Standards + Spec). *Exit:* no blocking findings on either axis; remaining judgement calls documented in the report; report delivered.
+2. **plan** — load `stages/plan.md`. Synthesize (no new interview) into a plan file: problem, stories, decisions, seams, tickets. *Exit:* standard — the user approves the plan file (one gate covering stories, seams, granularity, and edges in a single exchange); full — the spec (seams included) is confirmed and published, then the ticket breakdown is approved and published.
+3. **implement** — load `stages/implement.md`. Build the tickets test-first at the pre-agreed seams. *Exit:* all tickets built, committed and marked done, full test suite green.
+4. **code-review** — load `stages/code-review.md`. Two-axis review (Standards + Spec), then an acceptance pass. *Exit:* no blocking findings on either axis; remaining judgement calls documented; an acceptance checklist (deliverable → evidence) handed to the user for sign-off.
 
 Keep interview and plan in one context window — they build on the same thinking. Implement continues in the same session by default; `stages/implement.md` says when to split.

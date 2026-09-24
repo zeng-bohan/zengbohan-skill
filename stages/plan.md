@@ -11,9 +11,15 @@ In both modes, sketch the **seams** at which the feature will be tested: prefer 
 
 Avoid specific file paths or code snippets — they go stale fast. Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it and note briefly that it came from a prototype. Decision-rich parts only — not a working demo.
 
-## Standard mode — one-pager, one gate
+## Standard mode — plan file, one gate
 
-Write one plan in the conversation (or to a file if the user wants one):
+Write the plan to `.scratch/<feature-slug>/plan.md` (create the directory if needed). The file — not the conversation — is the durable record: it is what a fresh session resumes from and what code-review reads later. Present its contents in the conversation and iterate by editing the file.
+
+<plan-template>
+
+## Problem & Stories
+
+The problem, from the user's perspective, in a sentence or two — then 2–4 user stories in the form "As an <actor>, I want <feature>, so that <benefit>". This is what final acceptance checks against.
 
 ## Decisions
 
@@ -25,11 +31,9 @@ The seams agreed for testing, and what each covers.
 
 ## Tickets
 
-A numbered list. For each ticket:
+One checkbox per ticket, numbered in dependency order (blockers first). For each ticket:
 
-- **Title**: short descriptive name
-- **Blocked by**: which other tickets (if any) must complete first, or "None — can start immediately"
-- **What it delivers**: the end-to-end behaviour this ticket makes work, from the user's perspective — not a layer-by-layer implementation list
+- [ ] **T1 — <Title>** · **Blocked by**: T2, or "None — can start immediately" · **Delivers**: the end-to-end behaviour this ticket makes work, from the user's perspective — not a layer-by-layer implementation list · **Verify**: the one command or interaction that shows it works
 
 Each ticket is a **tracer bullet**: a narrow but complete path through every layer (schema, API, UI, tests), demoable or verifiable on its own, sized to fit in one context window. Wide refactors (mechanical changes with codebase-wide blast radius) are sequenced expand–contract instead — see Full mode for the rules; they apply here too.
 
@@ -37,7 +41,9 @@ Each ticket is a **tracer bullet**: a narrow but complete path through every lay
 
 What this plan deliberately does not touch.
 
-Present the plan once and ask one question: does this look right — seams, ticket granularity, and blocking edges? Iterate on whatever they push back on, then proceed. **This single exchange is the only gate** — do not re-ask piecemeal afterwards. No tracker publication unless the user asks.
+</plan-template>
+
+Present the plan once and ask one question: does this look right — problem, stories, seams, ticket granularity, and blocking edges? Iterate on whatever they push back on, then proceed. **This single exchange is the only gate** — do not re-ask piecemeal afterwards. No issue tracker needed unless the user asks.
 
 ## Full mode — spec, then tickets
 

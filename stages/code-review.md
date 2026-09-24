@@ -29,7 +29,7 @@ Look for the originating plan or spec, in this order:
 1. The plan or spec from the current conversation, if this session produced one.
 2. Issue references in the commit messages (`#123`, `Closes #45`, GitLab `!67`, etc.) — fetch via the workflow in `docs/agents/issue-tracker.md`.
 3. A path the user passed as an argument.
-4. A spec file under `docs/`, `specs/`, or `.scratch/` matching the branch name or feature.
+4. A plan or spec file under `docs/`, `specs/`, or `.scratch/` (e.g. `.scratch/<feature>/plan.md`) matching the branch name or feature.
 5. If nothing is found, ask the user where the spec is. If they say there isn't one, the **Spec** sub-agent will skip and report "no spec available".
 
 ### 3. Identify the standards sources
@@ -81,6 +81,16 @@ End with a one-line summary: total findings per axis, and the worst issue _withi
 ### 6. After the report
 
 Fix blocking findings, then re-run the review **at most once more**. Judgement-call smells stay recorded in the report — do not loop until "clean". Exit when both axes report no blocking findings and any remaining judgement calls are documented.
+
+### 7. Acceptance
+
+The two axes review the code; acceptance checks the feature. Map every deliverable to evidence:
+
+- List each ticket (standard: the plan file's tickets; full: the published tickets) — or each user story when there is no ticket list.
+- For each, name the evidence: the test that covers it (show a passing run), or the ticket's `Verify:` command / interaction.
+- A deliverable with no evidence is a finding: either add the check or flag the item as unverified — never call it done on vibes.
+
+End the report with an **acceptance checklist** for the user: one line per item — what it delivers, the evidence, how to re-run it. Their sign-off on that checklist is what closes the pipeline; a clean review report alone is not.
 
 ## Why two axes
 

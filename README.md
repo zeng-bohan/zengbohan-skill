@@ -34,9 +34,9 @@ The stages underneath:
 | --- | --- | --- |
 | 0 (on demand) | `stages/setup.md` | First time tracker artifacts are wanted: configure the issue tracker and doc layout |
 | 1 | `stages/interview.md` | Design-tree interview; leaves a glossary (`CONTEXT.md`) and ADRs behind |
-| 2 | `stages/plan.md` | Synthesize the decisions into a plan (one-pager, or spec + tickets) |
-| 3 | `stages/implement.md` | Build each ticket test-first at the pre-agreed seams, one commit each |
-| 4 | `stages/code-review.md` | Two-axis review (coding standards + spec fidelity) |
+| 2 | `stages/plan.md` | Synthesize the decisions into a plan file (stories, seams, tickets with `Verify:` lines) — or a published spec + tickets in full mode |
+| 3 | `stages/implement.md` | Build each ticket test-first at the pre-agreed seams, one commit each, ticking the plan as you go |
+| 4 | `stages/code-review.md` | Two-axis review (coding standards + spec fidelity), then an acceptance checklist handed to you for sign-off |
 
 The entry file (`SKILL.md`) picks the tier and routes; stage rules live only in `stages/`. Stage files are ordinary Markdown documents, not registered skills.
 
