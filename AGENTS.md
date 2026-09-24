@@ -8,6 +8,7 @@
 
 ## 结构约束
 
+- **显式触发 BY DESIGN**：根 `SKILL.md` 带 `disable-model-invocation: true`，只能通过 `/zengbohan-skill <task>` 调用，自然语言（开发/实现/按流程走 等）不触发 —— 勿改回自动触发，其他 harness 的接入配置也勿写成 always-on。
 - 入口只有根目录 `SKILL.md`（thin router：分档 + 路由 + 出口条件）；规则只活在 `stages/*.md` 里，避免双份维护 —— 不要把 stage 规则抄回 `SKILL.md`。
 - stage 文件名不叫 `SKILL.md`，避免被注册为独立技能；内部引用一律相对路径（如 `../references/tests.md`）。
 - `references/` 放格式模板与操作参考（PHASE-BOUNDARIES、CONTEXT/ADR-FORMAT、tests/mocking、issue-tracker 模板等）。

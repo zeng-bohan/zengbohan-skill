@@ -1,11 +1,12 @@
 ---
 name: zengbohan-skill
-description: "Three-tier development pipeline for feature work: micro fixes go straight in; standard (the default) is a one-round interview -> one plan approval -> in-session TDD build -> review; full adds multi-round grilling, a published spec, and tracer-bullet tickets for multi-session builds. Use when the user starts or continues a feature build, wants the structured workflow, or says 开发/实现/开始做/按流程走. Trivial changes (typo, copy tweak, one-line fix) skip the pipeline and are fixed directly."
+description: "Three-tier development pipeline for feature work: micro fixes go straight in; standard (the default) is a one-round interview -> one plan approval -> in-session TDD build -> review; full adds multi-round grilling, a published spec, and tracer-bullet tickets for multi-session builds."
+disable-model-invocation: true
 ---
 
 # zengbohan-skill
 
-A three-tier pipeline for development work. One pipeline, two depths — every tier above micro runs the same four stages; the tier only decides how deep each stage goes. Stage rules live in `stages/`; this file picks the tier and routes.
+A three-tier pipeline for development work, run only when explicitly invoked (`/zengbohan-skill <task>`). One pipeline, two depths — every tier above micro runs the same four stages; the tier only decides how deep each stage goes. Stage rules live in `stages/`; this file picks the tier and routes.
 
 Say in the first line of your reply which tier you took and why.
 

@@ -73,8 +73,9 @@ Then add this block to `~/.codex/AGENTS.md` (or the repo-level `AGENTS.md`):
 ```markdown
 ## Development workflow
 
-For every non-trivial development task, first read ~/.codex/zengbohan-skill/SKILL.md
-and follow its three-tier pipeline, loading the stage files it references under stages/.
+When the user invokes the zengbohan-skill pipeline (e.g. "/zengbohan-skill <task>"),
+first read ~/.codex/zengbohan-skill/SKILL.md and follow its three-tier pipeline,
+loading the stage files it references under stages/.
 ```
 
 ### Any other harness
@@ -82,7 +83,8 @@ and follow its three-tier pipeline, loading the stage files it references under 
 The skill is plain Markdown plus supporting files. Clone it anywhere your agent can read, then point your harness's always-on instruction file at the entry definition:
 
 ```markdown
-Before any development task, read <path-to>/zengbohan-skill/SKILL.md and follow it.
+When the user invokes the zengbohan-skill pipeline (e.g. "/zengbohan-skill <task>"),
+read <path-to>/zengbohan-skill/SKILL.md and follow it.
 ```
 
 This works for Cursor rules, Windsurf, Cline, opencode, or anything that can inject instructions.
@@ -93,16 +95,10 @@ Restart or refresh your harness after installation if the skill does not appear 
 
 ## Use
 
-Invoke it explicitly:
+Explicit invocation only — the skill never fires on natural-language triggers like "develop" or 按流程走; if you want the pipeline, call it by name:
 
 ```text
 /zengbohan-skill Add citation tracing to the RAG answer pipeline
-```
-
-…or just describe the task naturally — the description matches phrases like "develop", "implement", "let's build", 开发 / 实现 / 开始做 / 按流程走:
-
-```text
-按流程走，给导出功能加一个 CSV 后端
 ```
 
 The skill announces its tier in the first line of its reply. You stay in control at the decision points: interview rounds pause for your answers, and the plan (or spec + ticket breakdown) is published only after you approve it. Interview and plan share one context window so the design thinking stays connected; implementation continues in the same session by default and only splits when the context runs low.

@@ -73,8 +73,9 @@ git clone https://github.com/zeng-bohan/zengbohan-skill.git ~/.codex/zengbohan-s
 ```markdown
 ## Development workflow
 
-For every non-trivial development task, first read ~/.codex/zengbohan-skill/SKILL.md
-and follow its three-tier pipeline, loading the stage files it references under stages/.
+When the user invokes the zengbohan-skill pipeline (e.g. "/zengbohan-skill <task>"),
+first read ~/.codex/zengbohan-skill/SKILL.md and follow its three-tier pipeline,
+loading the stage files it references under stages/.
 ```
 
 ### 其他任何 harness
@@ -82,7 +83,8 @@ and follow its three-tier pipeline, loading the stage files it references under 
 本技能就是纯 Markdown 加配套文件。clone 到代理能读到的任何位置，然后把 harness 的常驻指令文件指向入口：
 
 ```markdown
-Before any development task, read <path-to>/zengbohan-skill/SKILL.md and follow it.
+When the user invokes the zengbohan-skill pipeline (e.g. "/zengbohan-skill <task>"),
+read <path-to>/zengbohan-skill/SKILL.md and follow it.
 ```
 
 Cursor rules、Windsurf、Cline、opencode 或任何能注入指令的工具都适用。
@@ -93,16 +95,10 @@ Cursor rules、Windsurf、Cline、opencode 或任何能注入指令的工具都�
 
 ## 使用
 
-显式调用：
+只做显式调用 —— 技能不会因 "develop"、按流程走 这类自然语言触发；想走流水线，点名调用：
 
 ```text
 /zengbohan-skill 给 RAG 答案管线加引用溯源
-```
-
-……或者自然地描述任务 —— description 会匹配 "develop"、"implement"、"let's build"、开发 / 实现 / 开始做 / 按流程走 这类说法：
-
-```text
-按流程走，给导出功能加一个 CSV 后端
 ```
 
 技能会在回复第一行说明它选了哪个档位、为什么。决策点上你始终做主：面试轮次会停下来等你的答案，plan（或 spec + ticket 拆分）也要你批准后才发布。面试和 plan 共用一个上下文窗口，设计思路保持连贯；实现默认在同一会话继续，只在上下文紧张时才拆分。
