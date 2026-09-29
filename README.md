@@ -145,6 +145,14 @@ Only the top-level `SKILL.md` is named `SKILL.md`, so harnesses register exactly
 
 The stage definitions are consolidated from Matt Pocock's engineering skill suite ([mattpocock/skills](https://github.com/mattpocock/skills)) — `grilling`, `domain-modeling`, `grill-with-docs`, `to-spec`, `to-tickets`, `implement`, `tdd`, `code-review`, `setup-matt-pocock-skills`, and `ask-matt`'s phase-boundary rules — last synced 2026-09-24. Upstream keeps growing (`triage`, `prototype`, `pr`, `diagnosing-bugs`, `wayfinder`, `wizard`, …); those are deliberately **not** embedded here — install them from mattpocock/skills if you want them. Packaging, consolidation, the three-tier flow, and the self-contained single-entry design by Bohan Zeng.
 
+## Support
+
+Questions, bug reports, and ideas: [open an issue](https://github.com/zeng-bohan/zengbohan-skill/issues). For install issues, include your harness (Claude Code / Codex CLI / other) and what you have tried.
+
+## Contributing
+
+This is a solo-maintained project. Issues for bugs and ideas are very welcome; for code or stage-rule changes, please open an issue first so the approach can be discussed before you invest time.
+
 ## License
 
 [MIT](LICENSE) © 2026 Bohan Zeng

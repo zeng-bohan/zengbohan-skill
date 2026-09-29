@@ -145,6 +145,14 @@ zengbohan-skill/          ← 仓库即技能；把这个文件夹 clone 进 ski
 
 各 stage 定义整合自 Matt Pocock 的工程技能套件（[mattpocock/skills](https://github.com/mattpocock/skills)）—— `grilling`、`domain-modeling`、`grill-with-docs`、`to-spec`、`to-tickets`、`implement`、`tdd`、`code-review`、`setup-matt-pocock-skills`，以及 `ask-matt` 的阶段边界规则 —— 最近同步于 2026-09-24。上游还在持续增加新技能（`triage`、`prototype`、`pr`、`diagnosing-bugs`、`wayfinder`、`wizard`……）；这些**刻意不**内嵌 —— 需要就去 mattpocock/skills 装。打包、整合、三档流水线与自包含单入口设计：Bohan Zeng。
 
+## 支持
+
+问题、缺陷报告与想法：[提一个 issue](https://github.com/zeng-bohan/zengbohan-skill/issues)。安装类问题请带上所用 harness（Claude Code / Codex CLI / 其他）与已尝试的步骤。
+
+## 参与
+
+个人维护项目。欢迎通过 issue 反馈缺陷与想法；想改代码或 stage 规则，请先开 issue 讨论方案再动手。
+
 ## 许可证
 
 [MIT](LICENSE) © 2026 Bohan Zeng
