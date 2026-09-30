@@ -39,13 +39,44 @@ The stages underneath:
 
 The entry file (`SKILL.md`) picks the tier and routes; stage rules live only in `stages/`. Stage files are ordinary Markdown documents, not registered skills.
 
+## What a run looks like
+
+```text
+> /zengbohan-skill Add citation tracing to the RAG answer pipeline
+
+zengbohan-skill · tier: standard (one approval, then build)
+
+▍ Interview   explored 3 areas in parallel; 2 decisions to make:
+              · where citations attach (answer tokens vs. report sections)?
+              · what counts as a trace? → recommendation offered
+▍ Plan        .scratch/2026-09-30-citation-tracing.md — 3 slices, each
+              with a Verify: line · approve to continue (y/n)
+▍ Implement   slice 1/3: failing test at the generator seam → code →
+              commit … slices 2-3 likewise, plan ticked as we go
+▍ Review      two-axis pass (standards + plan fidelity) → acceptance
+              checklist handed back for your sign-off
+```
+
+The skill announces its tier in the first line of its reply. You stay in control at the decision points: interview rounds pause for your answers, and the plan file is written only after you approve it. Interview and plan share one context window so the design thinking stays connected; implementation continues in the same session by default and only splits when the context runs low.
+
+## Tech stack
+
+No runtime, no build step, no dependencies — the skill is plain Markdown plus supporting files, packaged as a single folder:
+
+| Piece | What it is |
+| --- | --- |
+| `SKILL.md` | Entry point — tier dispatch, routing, exit conditions (YAML frontmatter: `name`, `description`) |
+| `stages/*.md` | The four stage definitions (rules live here, nowhere else) |
+| `references/*.md` | Operational recipes the stages point at |
+| Convention | [Agent Skills](https://agentskills.io) — any harness that scans a skills directory discovers it automatically |
+
 ## Self-contained by design
 
 Earlier releases required installing ten companion skills alongside this one. They are now **embedded and consolidated under `stages/`**, so installing this single folder is enough on any harness. Nothing else to install, nothing to fall out of sync.
 
 ## Install
 
-The repository root **is** the skill folder — clone it straight into a skills directory. The skill follows the [Agent Skills](https://agentskills.io) convention: a folder whose `SKILL.md` carries YAML frontmatter (`name`, `description`). Harnesses that scan a skills directory discover it automatically.
+The repository root **is** the skill folder — clone it straight into a skills directory.
 
 ### Claude Code
 
@@ -88,19 +119,20 @@ read <path-to>/zengbohan-skill/SKILL.md and follow it.
 
 This works for Cursor rules, Windsurf, Cline, opencode, or anything that can inject instructions.
 
-> **Windows:** replace `~/` with `%USERPROFILE%\` in the paths above.
-
-Restart or refresh your harness after installation if the skill does not appear immediately.
-
 ## Use
-
-Explicit invocation only — the skill never fires on natural-language triggers like "develop" or 按流程走; if you want the pipeline, call it by name:
 
 ```text
 /zengbohan-skill Add citation tracing to the RAG answer pipeline
 ```
 
-The skill announces its tier in the first line of its reply. You stay in control at the decision points: interview rounds pause for your answers, and the plan file is written only after you approve it. Interview and plan share one context window so the design thinking stays connected; implementation continues in the same session by default and only splits when the context runs low.
+## Notes and gotchas
+
+- **Explicit invocation only.** The skill never fires on natural-language triggers like "develop" or 按流程走 — if you want the pipeline, call it by name.
+- **Restart after install.** If the skill does not appear immediately, restart or refresh your harness.
+- **Windows paths.** Replace `~/` with `%USERPROFILE%\` in every path above.
+- **One artifact, not a paper trail.** The pipeline produces exactly one file — the plan under `.scratch/` — and the conversation carries everything else. No glossaries, ADRs, specs, or ticket lists.
+- **Exactly one registered skill.** Only the top-level `SKILL.md` is named `SKILL.md`; stage files are ordinary Markdown, so harnesses register exactly one skill.
+- **Upstream skills are not embedded.** `triage`, `prototype`, `pr`, `diagnosing-bugs`, `wayfinder`, `wizard` and the rest of the growing mattpocock suite are deliberately out — install them from [mattpocock/skills](https://github.com/mattpocock/skills) if you want them.
 
 ## Repository layout
 
@@ -122,13 +154,11 @@ zengbohan-skill/          ← the repo IS the skill; clone this folder into a sk
     └── mocking.md
 ```
 
-Only the top-level `SKILL.md` is named `SKILL.md`, so harnesses register exactly one skill.
-
 ## Design principles
 
 - **Design before code.** Make important decisions explicit — and only the important ones.
 - **Ceremony scales with the work.** Gates and process earn their keep per feature size; a one-day feature gets one approval, not a paper trail of its own.
-- **One artifact, not a paper trail.** The pipeline produces exactly one file — the plan under `.scratch/` — and the conversation carries everything else. No glossaries, ADRs, specs, or ticket lists.
+- **One artifact, not a paper trail.** The pipeline produces exactly one file — the plan under `.scratch/` — and the conversation carries everything else.
 - **Ship vertical slices.** Every slice should be independently verifiable.
 - **Test the seam.** Prefer tests that exercise the real boundary and failure mode.
 - **Add complexity when evidence requires it.** Use architecture and diagnosis tools when the codebase earns them.
@@ -136,6 +166,10 @@ Only the top-level `SKILL.md` is named `SKILL.md`, so harnesses register exactly
 ## Credits
 
 The stage definitions are consolidated from Matt Pocock's engineering skill suite ([mattpocock/skills](https://github.com/mattpocock/skills)) — `grilling`, `domain-modeling`, `grill-with-docs`, `to-spec`, `to-tickets`, `implement`, `tdd`, `code-review`, `setup-matt-pocock-skills`, and `ask-matt`'s phase-boundary rules — last synced 2026-09-24. Upstream keeps growing (`triage`, `prototype`, `pr`, `diagnosing-bugs`, `wayfinder`, `wizard`, …); those are deliberately **not** embedded here — install them from mattpocock/skills if you want them. Packaging, consolidation, the three-tier flow, and the self-contained single-entry design by Bohan Zeng.
+
+## Contributing
+
+This is a solo-maintained project. Bugs, questions, and feature ideas: [open an issue](https://github.com/zeng-bohan/zengbohan-skill/issues).
 
 ## License
 
