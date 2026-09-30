@@ -23,20 +23,19 @@
 | 档位 | 何时用 | 跑什么 |
 | --- | --- | --- |
 | **micro** | 错别字、文案微调、一行修复 | 直接改，不进流水线 |
-| **standard**（默认） | 一个上下文窗口 / 一次坐下来能做完 | 一轮精简面试 → 一页 plan **一次批准** → 同会话 TDD 实现 → 一次评审 |
-| **full** | 跨会话、跨天的大功能 | 多轮 grilling → 发布 spec → 你批准的 tracer-bullet tickets → 按 ticket 实现 → 双轴评审 |
+| **standard**（默认） | 一个上下文窗口 / 一次坐下来能做完 | 并行摸底代码 → 一轮精简面试 → 一页 plan **一次批准** → 同会话 TDD 实现 → 一次评审 |
+| **full** | 跨会话、跨天的大功能 | 多轮 grilling → 双门 plan（先内容、后切片）→ 按切片实现 → 双轴评审 |
 
-签字点是刻意设计的：standard 只要**一次**批准（plan 把 seams、ticket 粒度、依赖边放在同一次交换里确认）；full **两次**（spec，然后 ticket 拆分）。环境事实永远不会变成问题抛回给你 —— 只有决策才问你，且每题都带推荐答案。
+签字点是刻意设计的：standard 只要**一次**批准（plan 把 seams、切片粒度、依赖边放在同一次交换里确认）；full **两次**（plan 内容，然后切片拆分）。环境事实永远不会变成问题抛回给你 —— 只有决策才问你，且每题都带推荐答案。
 
 底层 stage：
 
 | Stage | 定义 | 做什么 |
 | --- | --- | --- |
-| 0（按需） | `stages/setup.md` | 首次需要 tracker 产物时：配置 issue tracker 与文档布局 |
-| 1 | `stages/interview.md` | 设计树面试；留下术语表（`CONTEXT.md`）和 ADR |
-| 2 | `stages/plan.md` | 把决策综合成 plan 文件（问题 + stories + seams + 带 `Verify:` 的 tickets），full 档则发布 spec + tickets |
-| 3 | `stages/implement.md` | 按预先约定的 seam 以 TDD 构建每个 ticket，每个一提交，边做边勾 plan |
-| 4 | `stages/code-review.md` | 双轴评审（编码规范 + spec 忠实度），末尾产出交给你签字的验收清单 |
+| 1 | `stages/interview.md` | 并行探索代码库，再做设计树面试 —— 全程不落盘 |
+| 2 | `stages/plan.md` | 把决策综合成 plan 文件（问题 + stories + seams + 带 `Verify:` 的切片），standard 一次批准、full 两道门 |
+| 3 | `stages/implement.md` | 按预先约定的 seam 以 TDD 构建每个切片，每个一提交，边做边勾 plan |
+| 4 | `stages/code-review.md` | 双轴评审（编码规范 + plan 忠实度），末尾产出交给你签字的验收清单 |
 
 入口文件 `SKILL.md` 只负责分档和路由；规则只住在 `stages/` 里。stage 文件是普通 Markdown 文档，不是注册技能。
 
@@ -101,7 +100,7 @@ Cursor rules、Windsurf、Cline、opencode 或任何能注入指令的工具都�
 /zengbohan-skill 给 RAG 答案管线加引用溯源
 ```
 
-技能会在回复第一行说明它选了哪个档位、为什么。决策点上你始终做主：面试轮次会停下来等你的答案，plan（或 spec + ticket 拆分）也要你批准后才发布。面试和 plan 共用一个上下文窗口，设计思路保持连贯；实现默认在同一会话继续，只在上下文紧张时才拆分。
+技能会在回复第一行说明它选了哪个档位、为什么。决策点上你始终做主：面试轮次会停下来等你的答案，plan 文件也要你批准后才落盘。面试和 plan 共用一个上下文窗口，设计思路保持连贯；实现默认在同一会话继续，只在上下文紧张时才拆分。
 
 ## 仓库布局
 
@@ -112,23 +111,15 @@ zengbohan-skill/          ← 仓库即技能；把这个文件夹 clone 进 ski
 ├── LICENSE
 ├── docs/
 │   └── banner.svg
-├── stages/               ← 五个 stage 定义（规则只住这里）
-│   ├── setup.md
+├── stages/               ← 四个 stage 定义（规则只住这里）
 │   ├── interview.md
 │   ├── plan.md
 │   ├── implement.md
 │   └── code-review.md
-└── references/           ← stage 引用的格式与操作配方
+└── references/           ← stage 引用的操作配方
     ├── PHASE-BOUNDARIES.md
-    ├── CONTEXT-FORMAT.md
-    ├── ADR-FORMAT.md
     ├── tests.md
-    ├── mocking.md
-    ├── issue-tracker-github.md
-    ├── issue-tracker-gitlab.md
-    ├── issue-tracker-local.md
-    ├── triage-labels.md
-    └── domain.md
+    └── mocking.md
 ```
 
 只有顶层 `SKILL.md` 叫 `SKILL.md`，所以 harness 只会注册一个技能。
@@ -136,22 +127,15 @@ zengbohan-skill/          ← 仓库即技能；把这个文件夹 clone 进 ski
 ## 设计原则
 
 - **先设计后编码。** 重要决策要显式 —— 也只显式重要的那些。
-- **仪式感跟着工作量走。** 签字点、文档、流程按功能规模挣饭吃；一天的功能只批一次，不配一套独立的文书档案。
-- **交付垂直切片。** 每个 ticket 都应可独立验证。
+- **仪式感跟着工作量走。** 签字点和流程按功能规模挣饭吃；一天的功能只批一次，不配一套独立的文书档案。
+- **只落一个文件。** 整条流水线只产出 `.scratch/` 下的一份 plan，其余一切都活在对话里 —— 不写术语表、ADR、spec，也不拆 ticket 文件。
+- **交付垂直切片。** 每个切片都应可独立验证。
 - **测在 seam 上。** 优先测真实边界和失败模式的测试。
 - **证据要求时才加复杂度。** 架构和诊断工具等代码库挣到了再用。
 
 ## 致谢
 
 各 stage 定义整合自 Matt Pocock 的工程技能套件（[mattpocock/skills](https://github.com/mattpocock/skills)）—— `grilling`、`domain-modeling`、`grill-with-docs`、`to-spec`、`to-tickets`、`implement`、`tdd`、`code-review`、`setup-matt-pocock-skills`，以及 `ask-matt` 的阶段边界规则 —— 最近同步于 2026-09-24。上游还在持续增加新技能（`triage`、`prototype`、`pr`、`diagnosing-bugs`、`wayfinder`、`wizard`……）；这些**刻意不**内嵌 —— 需要就去 mattpocock/skills 装。打包、整合、三档流水线与自包含单入口设计：Bohan Zeng。
-
-## 支持
-
-问题、缺陷报告与想法：[提一个 issue](https://github.com/zeng-bohan/zengbohan-skill/issues)。安装类问题请带上所用 harness（Claude Code / Codex CLI / 其他）与已尝试的步骤。
-
-## 参与
-
-个人维护项目。欢迎通过 issue 反馈缺陷与想法；想改代码或 stage 规则，请先开 issue 讨论方案再动手。
 
 ## 许可证
 

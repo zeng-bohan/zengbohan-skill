@@ -23,20 +23,19 @@
 | Tier | When | What runs |
 | --- | --- | --- |
 | **micro** | typo, copy tweak, one-line fix | fixed directly, no pipeline |
-| **standard** (default) | fits one context window / one sitting | one-round interview → one-pager plan with a **single approval** → in-session TDD build → one review pass |
-| **full** | spans sessions or days | multi-round grilling → published spec → tracer-bullet tickets you approve → per-ticket build → two-axis review |
+| **standard** (default) | fits one context window / one sitting | parallel repo exploration → one-round interview → one-pager plan with a **single approval** → in-session TDD build → one review pass |
+| **full** | spans sessions or days | multi-round grilling → two-gate plan (content, then slices) → per-slice build → two-axis review |
 
-Gates, deliberately: standard takes **one** approval (the plan covers seams, ticket granularity, and blocking edges in one exchange); full takes **two** (spec, then ticket breakdown). Environment facts never come back to you as questions — only decisions do, each with a recommended answer.
+Gates, deliberately: standard takes **one** approval (the plan covers seams, slice granularity, and blocking edges in one exchange); full takes **two** (the plan's content, then its slice breakdown). Environment facts never come back to you as questions — only decisions do, each with a recommended answer.
 
 The stages underneath:
 
 | Stage | Definition | What happens |
 | --- | --- | --- |
-| 0 (on demand) | `stages/setup.md` | First time tracker artifacts are wanted: configure the issue tracker and doc layout |
-| 1 | `stages/interview.md` | Design-tree interview; leaves a glossary (`CONTEXT.md`) and ADRs behind |
-| 2 | `stages/plan.md` | Synthesize the decisions into a plan file (stories, seams, tickets with `Verify:` lines) — or a published spec + tickets in full mode |
-| 3 | `stages/implement.md` | Build each ticket test-first at the pre-agreed seams, one commit each, ticking the plan as you go |
-| 4 | `stages/code-review.md` | Two-axis review (coding standards + spec fidelity), then an acceptance checklist handed to you for sign-off |
+| 1 | `stages/interview.md` | Parallel codebase exploration, then a design-tree interview — nothing written down |
+| 2 | `stages/plan.md` | Synthesize the decisions into the plan file (stories, seams, slices with `Verify:` lines) — one approval, or two gates in full mode |
+| 3 | `stages/implement.md` | Build each slice test-first at the pre-agreed seams, one commit each, ticking the plan as you go |
+| 4 | `stages/code-review.md` | Two-axis review (coding standards + plan fidelity), then an acceptance checklist handed to you for sign-off |
 
 The entry file (`SKILL.md`) picks the tier and routes; stage rules live only in `stages/`. Stage files are ordinary Markdown documents, not registered skills.
 
@@ -101,7 +100,7 @@ Explicit invocation only — the skill never fires on natural-language triggers 
 /zengbohan-skill Add citation tracing to the RAG answer pipeline
 ```
 
-The skill announces its tier in the first line of its reply. You stay in control at the decision points: interview rounds pause for your answers, and the plan (or spec + ticket breakdown) is published only after you approve it. Interview and plan share one context window so the design thinking stays connected; implementation continues in the same session by default and only splits when the context runs low.
+The skill announces its tier in the first line of its reply. You stay in control at the decision points: interview rounds pause for your answers, and the plan file is written only after you approve it. Interview and plan share one context window so the design thinking stays connected; implementation continues in the same session by default and only splits when the context runs low.
 
 ## Repository layout
 
@@ -112,23 +111,15 @@ zengbohan-skill/          ← the repo IS the skill; clone this folder into a sk
 ├── LICENSE
 ├── docs/
 │   └── banner.svg
-├── stages/               ← the five stage definitions (rules live here, nowhere else)
-│   ├── setup.md
+├── stages/               ← the four stage definitions (rules live here, nowhere else)
 │   ├── interview.md
 │   ├── plan.md
 │   ├── implement.md
 │   └── code-review.md
-└── references/           ← formats and operational recipes the stages point at
+└── references/           ← operational recipes the stages point at
     ├── PHASE-BOUNDARIES.md
-    ├── CONTEXT-FORMAT.md
-    ├── ADR-FORMAT.md
     ├── tests.md
-    ├── mocking.md
-    ├── issue-tracker-github.md
-    ├── issue-tracker-gitlab.md
-    ├── issue-tracker-local.md
-    ├── triage-labels.md
-    └── domain.md
+    └── mocking.md
 ```
 
 Only the top-level `SKILL.md` is named `SKILL.md`, so harnesses register exactly one skill.
@@ -136,22 +127,15 @@ Only the top-level `SKILL.md` is named `SKILL.md`, so harnesses register exactly
 ## Design principles
 
 - **Design before code.** Make important decisions explicit — and only the important ones.
-- **Ceremony scales with the work.** Gates, docs, and process earn their keep per feature size; a one-day feature gets one approval, not a paper trail of its own.
-- **Ship vertical slices.** Every ticket should be independently verifiable.
+- **Ceremony scales with the work.** Gates and process earn their keep per feature size; a one-day feature gets one approval, not a paper trail of its own.
+- **One artifact, not a paper trail.** The pipeline produces exactly one file — the plan under `.scratch/` — and the conversation carries everything else. No glossaries, ADRs, specs, or ticket lists.
+- **Ship vertical slices.** Every slice should be independently verifiable.
 - **Test the seam.** Prefer tests that exercise the real boundary and failure mode.
 - **Add complexity when evidence requires it.** Use architecture and diagnosis tools when the codebase earns them.
 
 ## Credits
 
 The stage definitions are consolidated from Matt Pocock's engineering skill suite ([mattpocock/skills](https://github.com/mattpocock/skills)) — `grilling`, `domain-modeling`, `grill-with-docs`, `to-spec`, `to-tickets`, `implement`, `tdd`, `code-review`, `setup-matt-pocock-skills`, and `ask-matt`'s phase-boundary rules — last synced 2026-09-24. Upstream keeps growing (`triage`, `prototype`, `pr`, `diagnosing-bugs`, `wayfinder`, `wizard`, …); those are deliberately **not** embedded here — install them from mattpocock/skills if you want them. Packaging, consolidation, the three-tier flow, and the self-contained single-entry design by Bohan Zeng.
-
-## Support
-
-Questions, bug reports, and ideas: [open an issue](https://github.com/zeng-bohan/zengbohan-skill/issues). For install issues, include your harness (Claude Code / Codex CLI / other) and what you have tried.
-
-## Contributing
-
-This is a solo-maintained project. Issues for bugs and ideas are very welcome; for code or stage-rule changes, please open an issue first so the approach can be discussed before you invest time.
 
 ## License
 

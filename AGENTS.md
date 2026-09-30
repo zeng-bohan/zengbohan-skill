@@ -11,11 +11,12 @@
 - **显式触发 BY DESIGN**：根 `SKILL.md` 带 `disable-model-invocation: true`，只能通过 `/zengbohan-skill <task>` 调用，自然语言（开发/实现/按流程走 等）不触发 —— 勿改回自动触发，其他 harness 的接入配置也勿写成 always-on。
 - 入口只有根目录 `SKILL.md`（thin router：分档 + 路由 + 出口条件）；规则只活在 `stages/*.md` 里，避免双份维护 —— 不要把 stage 规则抄回 `SKILL.md`。
 - stage 文件名不叫 `SKILL.md`，避免被注册为独立技能；内部引用一律相对路径（如 `../references/tests.md`）。
-- `references/` 放格式模板与操作参考（PHASE-BOUNDARIES、CONTEXT/ADR-FORMAT、tests/mocking、issue-tracker 模板等）。
+- **零文书 BY DESIGN**：整条流水线唯一落地物是 `.scratch/<feature-slug>/plan.md`；不写 CONTEXT.md、ADR、spec，不拆独立 ticket 文件，也不接 issue tracker —— 勿加回。
+- `references/` 放操作参考（PHASE-BOUNDARIES、tests/mocking）。
 - `README.md` / `README.zh-CN.md` 记录各 harness 的一步安装方式；用户偏好单文件夹安装，勿建议拆回 companion skills（ask-matt 等，已不存在独立版）。
 
 ## 上游同步（mattpocock/skills）
 
-- 上游技能按类别目录组织：grilling 在 `productivity/grilling`，其余在 `engineering/<name>`。本仓的映射：interview ← grilling + domain-modeling + grill-with-docs；plan ← to-spec + to-tickets；implement ← implement + tdd；setup ← setup-matt-pocock-skills；references/PHASE-BOUNDARIES ← ask-matt。
+- 上游技能按类别目录组织：grilling 在 `productivity/grilling`，其余在 `engineering/<name>`。本仓的映射：interview ← grilling + domain-modeling + grill-with-docs；plan ← to-spec + to-tickets；implement ← implement + tdd；references/PHASE-BOUNDARIES ← ask-matt。
 - 跨技能引用的差异是 BY DESIGN：上游写 "call the Skill tool"，本仓写 "read <path>" —— **不要把这个差异回灌上游**。
 - 上游新技能（triage / prototype / pr / diagnosing-bugs / wayfinder / wizard 等）按设计不内嵌；需要时直接用上游。

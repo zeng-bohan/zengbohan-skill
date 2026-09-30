@@ -1,11 +1,21 @@
 ---
 name: interview
-description: A relentless interview that sharpens an idea into a settled design tree, leaving a glossary (CONTEXT.md) and ADRs behind as it goes.
+description: A relentless interview that sharpens an idea into a settled design tree — grounded by parallel codebase exploration first, and kept entirely in conversation.
 ---
 
 # Interview
 
-Interview the user relentlessly until you reach a shared understanding. Map this as a **design tree**: every decision branches into the decisions that hang off it. As terms and hard-to-reverse choices crystallise, leave a paper trail (see Domain modeling below).
+Explore the ground, then interview the user relentlessly until you reach a shared understanding. Map the result as a **design tree**: every decision branches into the decisions that hang off it. This stage writes nothing down — the tree lives in the conversation, and its settled decisions and vocabulary flow into the plan.
+
+## Explore before you ask
+
+If the feature touches code you haven't read — an unfamiliar module, someone else's repo, an area you'd otherwise be guessing about — dispatch **two or three explore sub-agents in parallel** before composing round one, then read the key files they surface yourself:
+
+1. **Similar features** — find features resembling this request and trace how they are implemented end to end.
+2. **The lay of the land** — map the architecture and abstractions of the area the feature will touch.
+3. **The status quo** — analyze how the behaviour being changed or replaced works today.
+
+Launch first, ask second: their facts feed your recommended answers, so have them running while you draft round one. If you wrote the surrounding code yourself and know it cold, skip this — exploration you don't need is ceremony.
 
 ## Rounds and the frontier
 
@@ -34,17 +44,13 @@ Finding _facts_ is your job, never the user's. When a frontier question needs a 
 - **standard tier:** one round is usually enough. Settle the top-level decisions and their immediate consequences, then move to the plan — do not expand every leaf of the tree. Take a second round only when its answers would clearly change the plan's shape; otherwise carry open micro-decisions into implementation.
 - **full tier:** work until the frontier is empty — every branch of the design tree visited, nothing left silently assumed. Do not act on it until the user confirms you have reached a shared understanding.
 
-## Domain modeling — leave a paper trail
+## Domain discipline, in conversation
 
-Actively build and sharpen the project's domain model as you design: challenge terms, invent edge-case scenarios, and write the glossary and decisions down the moment they crystallise. (Merely _reading_ `CONTEXT.md` for vocabulary is not this — that's a one-line habit. This is for when you're changing the model, not just consuming it.)
+Sharpen the project's language as you design — just don't write files to do it:
 
-Most repos have a single context: `CONTEXT.md` and `docs/adr/` at the repo root. If a `CONTEXT-MAP.md` exists at the root, the repo has multiple contexts and the map points to each one's `CONTEXT.md` and `docs/adr/`. Create files lazily — only when you have something to write.
-
-During the session:
-
-- **Challenge against the glossary.** When the user uses a term that conflicts with the existing language in `CONTEXT.md`, call it out immediately. "Your glossary defines 'cancellation' as X, but you seem to mean Y — which is it?"
+- **Challenge settled vocabulary.** When the user uses a term that conflicts with language already established in this conversation, call it out immediately. "You defined 'cancellation' as X, but you seem to mean Y now — which is it?"
 - **Sharpen fuzzy language.** When the user uses vague or overloaded terms, propose a precise canonical term. "You're saying 'account' — do you mean the Customer or the User? Those are different things."
 - **Discuss concrete scenarios.** Stress-test domain relationships with specific scenarios that probe edge cases and force precision about the boundaries between concepts.
 - **Cross-reference with code.** When the user states how something works, check whether the code agrees; surface any contradiction.
-- **Update `CONTEXT.md` inline** the moment a term resolves — don't batch. Use the format in `../references/CONTEXT-FORMAT.md`. `CONTEXT.md` is a glossary and nothing else: no implementation details, no specs, no scratch pad.
-- **Offer ADRs sparingly** — only when all three are true: hard to reverse, surprising without context, and the result of a real trade-off. Use the format in `../references/ADR-FORMAT.md`.
+
+Terms that crystallise land in the plan's Decisions section — that is where they get written down, and nowhere else.

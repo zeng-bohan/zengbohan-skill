@@ -1,6 +1,6 @@
 ---
 name: zengbohan-skill
-description: "Three-tier development pipeline for feature work: micro fixes go straight in; standard (the default) is a one-round interview -> one plan approval -> in-session TDD build -> review; full adds multi-round grilling, a published spec, and tracer-bullet tickets for multi-session builds."
+description: "Three-tier development pipeline for feature work: micro fixes go straight in; standard (the default) is a one-round interview -> one plan approval -> in-session TDD build -> review; full adds multi-round grilling and a two-gate plan for multi-session builds."
 disable-model-invocation: true
 ---
 
@@ -16,26 +16,23 @@ Say in the first line of your reply which tier you took and why.
 | --- | --- | --- |
 | **micro** | typo, copy tweak, one-line fix, or anything smaller than a feature | fix directly, nothing else |
 | **standard** (default) | the feature fits one context window and about one sitting | the four stages at standard depth |
-| **full** | the feature will span sessions or days, or the user explicitly wants spec + tickets on the tracker | the four stages at full depth |
+| **full** | the feature will span sessions or days | the four stages at full depth |
 
-When torn between standard and full, take standard and offer to escalate once the plan is on the table. Escalating mid-flight means deepening the plan stage (publish the plan as a spec and split out tickets), not starting over.
+When torn between standard and full, take standard and offer to escalate once the plan is on the table. Escalating mid-flight means deepening the plan stage (a fuller interview and a finer slice breakdown), not starting over.
 
 ## Shared rules
 
 - **Facts are your job, decisions are the user's.** When a question needs an answer from the environment (filesystem, tools, docs, DB), look it up or dispatch a sub-agent — never put it to the user. Only decisions go to the user, and each carries a recommended answer.
 - **Context hygiene** follows `references/PHASE-BOUNDARIES.md`: continuing the session is always the first option; clear, compact, or split only at stage boundaries.
-
-## Stage 0 — setup (once per repo, on demand)
-
-Only the full tier needs tracker artifacts, so setup runs lazily: the first time a stage wants `docs/agents/issue-tracker.md` and it is missing, load `stages/setup.md`. It presents the full proposed configuration in one pass and writes after a single confirmation.
+- **One artifact only.** The pipeline writes a single file — the plan under `.scratch/<feature-slug>/plan.md`. No glossaries, ADRs, specs, or ticket files; everything else lives in the conversation.
 
 ## The four stages
 
 Run them in order. Each stage file carries its own rules; the line here is its exit condition only.
 
-1. **interview** — load `stages/interview.md`. Sharpen the idea into a settled design tree, leaving `CONTEXT.md` and ADRs behind. *Exit:* standard — the top-level decisions and their immediate consequences are settled; full — the frontier is empty and the user confirms shared understanding.
-2. **plan** — load `stages/plan.md`. Synthesize (no new interview) into a plan file: problem, stories, decisions, seams, tickets. *Exit:* standard — the user approves the plan file (one gate covering stories, seams, granularity, and edges in a single exchange); full — the spec (seams included) is confirmed and published, then the ticket breakdown is approved and published.
-3. **implement** — load `stages/implement.md`. Build the tickets test-first at the pre-agreed seams. *Exit:* all tickets built, committed and marked done, full test suite green.
-4. **code-review** — load `stages/code-review.md`. Two-axis review (Standards + Spec), then an acceptance pass. *Exit:* no blocking findings on either axis; remaining judgement calls documented; an acceptance checklist (deliverable → evidence) handed to the user for sign-off.
+1. **interview** — load `stages/interview.md`. Explore unfamiliar code with parallel sub-agents, then sharpen the idea into a settled design tree held in conversation. *Exit:* standard — the top-level decisions and their immediate consequences are settled; full — the frontier is empty and the user confirms shared understanding.
+2. **plan** — load `stages/plan.md`. Synthesize (no new interview) into the plan file: problem, stories, decisions, seams, slices. *Exit:* standard — the user approves the plan in one gate; full — two gates: the plan's content, then its slice breakdown.
+3. **implement** — load `stages/implement.md`. Build the slices test-first at the pre-agreed seams. *Exit:* all slices built, committed and ticked off in the plan file, full test suite green.
+4. **code-review** — load `stages/code-review.md`. Two-axis review (Standards + Plan), then an acceptance pass. *Exit:* no blocking findings on either axis; remaining judgement calls documented; an acceptance checklist (deliverable → evidence) handed to the user for sign-off.
 
 Keep interview and plan in one context window — they build on the same thinking. Implement continues in the same session by default; `stages/implement.md` says when to split.
