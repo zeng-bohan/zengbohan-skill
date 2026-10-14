@@ -1,38 +1,35 @@
 ---
 name: zengbohan-skill
-description: "Three-tier development pipeline for feature work: micro fixes go straight in; standard (the default) is a one-round interview -> one plan approval -> in-session TDD build -> review; full adds multi-round grilling and a two-gate plan for multi-session builds."
+description: "Explicitly invoked development workflow for features, fixes, and refactors: risk-based micro/standard/full tiers, one resumable plan, verified slices, and two-axis review."
 disable-model-invocation: true
 ---
 
 # zengbohan-skill
 
-A three-tier pipeline for development work, run only when explicitly invoked (`/zengbohan-skill <task>`). One pipeline, two depths — every tier above micro runs the same four stages; the tier only decides how deep each stage goes. Stage rules live in `stages/`; this file picks the tier and routes.
+Run only when the user explicitly names this skill for development work, through `$zengbohan-skill <task>`, `/zengbohan-skill <task>`, or the harness's skill picker. Generic requests to develop or follow a process do not activate it. Requests to inspect or edit the skill itself are skill maintenance, not a development pipeline invocation.
 
-Say in the first line of your reply which tier you took and why.
+Announce the chosen tier and reason. Honour an explicit tier unless its risk requires escalation; explain the reason. Keep replies in the user's language. This entry routes; stage rules live in `stages/`.
 
 ## Pick the tier
 
-| Tier | When | What runs |
-| --- | --- | --- |
-| **micro** | typo, copy tweak, one-line fix, or anything smaller than a feature | fix directly, nothing else |
-| **standard** (default) | the feature fits one context window and about one sitting | the four stages at standard depth |
-| **full** | the feature will span sessions or days | the four stages at full depth |
+- **micro:** local, low-risk, well-understood, easily reversible changes such as a typo or isolated copy tweak. Fix and perform proportionate verification without interview or plan. Small line count alone does not qualify.
+- **standard (default):** bounded features, fixes, or refactors whose decisions and dependencies can be settled in one short planning exchange. Run four stages at standard depth.
+- **full:** work spanning sessions, with multiple dependent deliverables or substantial architectural uncertainty. Run four stages at full depth.
 
-When torn between standard and full, take standard and offer to escalate once the plan is on the table. Escalating mid-flight means deepening the plan stage (a fuller interview and a finer slice breakdown), not starting over.
+Changes involving authorization, money, destructive operations, migrations, shared API compatibility, or concurrency/integrity are at least standard regardless of size. Prefer standard over full when uncertain; escalate by extending the existing plan, never restarting settled work.
 
 ## Shared rules
 
-- **Facts are your job, decisions are the user's.** When a question needs an answer from the environment (filesystem, tools, docs, DB), look it up or dispatch a sub-agent — never put it to the user. Only decisions go to the user, and each carries a recommended answer.
-- **Context hygiene** follows `references/PHASE-BOUNDARIES.md`: continuing the session is always the first option; clear, compact, or split only at stage boundaries.
-- **One artifact only.** The pipeline writes a single file — the plan under `.scratch/<feature-slug>/plan.md`. No glossaries, ADRs, specs, or ticket files; everything else lives in the conversation.
+- Look up accessible environment facts. Ask the user only for missing business knowledge, unavailable information, and decisions that materially affect scope, behaviour, or risk; recommend an answer. Resolve routine engineering choices yourself.
+- Preserve explicit authorization and restrictions across stages. Plan approval does not by itself authorize commits, pushes, merges, deployments, or live database writes. Follow the execution policy recorded in the plan.
+- The only workflow document is `.scratch/<feature-slug>/plan.md`. Code, tests, and requested product deliverables are not workflow documents. No extra ADRs, specs, tickets, or handoff files.
+- Use available tools; parallel exploration/review may use subagents when supported. Fall back to sequential work when unavailable. Context handling follows `references/PHASE-BOUNDARIES.md`.
 
-## The four stages
+## Four stages
 
-Run them in order. Each stage file carries its own rules; the line here is its exit condition only.
+1. **interview** — read `stages/interview.md`. Exit when blocking decisions are settled and remaining assumptions are explicit; full also confirms shared understanding.
+2. **plan** — read `stages/plan.md`. Exit with one approved plan gate for standard; content then slices for full. Existing explicit approval counts; do not re-ask.
+3. **implement** — read `stages/implement.md`. Exit when planned behaviour is implemented and agreed checks pass; commit only under the execution policy. Record incomplete checks honestly.
+4. **code-review** — read `stages/code-review.md`. Exit with no blocking findings and an evidence-backed acceptance checklist. Report delivery separately from pending user sign-off.
 
-1. **interview** — load `stages/interview.md`. Explore unfamiliar code with parallel sub-agents, then sharpen the idea into a settled design tree held in conversation. *Exit:* standard — the top-level decisions and their immediate consequences are settled; full — the frontier is empty and the user confirms shared understanding.
-2. **plan** — load `stages/plan.md`. Synthesize (no new interview) into the plan file: problem, stories, decisions, seams, slices. *Exit:* standard — the user approves the plan in one gate; full — two gates: the plan's content, then its slice breakdown.
-3. **implement** — load `stages/implement.md`. Build the slices test-first at the pre-agreed seams. *Exit:* all slices built, committed and ticked off in the plan file, full test suite green.
-4. **code-review** — load `stages/code-review.md`. Two-axis review (Standards + Plan), then an acceptance pass. *Exit:* no blocking findings on either axis; remaining judgement calls documented; an acceptance checklist (deliverable → evidence) handed to the user for sign-off.
-
-Keep interview and plan in one context window — they build on the same thinking. Implement continues in the same session by default; `stages/implement.md` says when to split.
+Continue in the same session by default. Resume by reading the plan and verifying the current workspace, not by trusting checkboxes alone.

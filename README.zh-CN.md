@@ -18,15 +18,15 @@
 
 ## 它做什么
 
-`zengbohan-skill` 是开发工作的唯一入口 — 一条流水线，两种深度。每个功能都走同样的四个阶段；你选的档位决定每个阶段走多深，让流程的仪式感随工作量伸缩，而不是反客为主。
+`zengbohan-skill` 是显式调用的开发流程，适用于功能、修复和重构。按风险和复杂度选择档位，让流程投入和工作规模相称。
 
 | 档位 | 适用 | 执行内容 |
 | --- | --- | --- |
-| **micro** | 错别字、文案微调、单行修复 | 直接修，不走流水线 |
-| **standard**（默认） | 一个上下文窗口 / 一次坐下来能完成 | 并行探索仓库 → 一轮访谈 → 一页纸计划 + **单次批准** → 会话内 TDD 构建 → 一轮评审 |
-| **full** | 跨会话或跨天 | 多轮拷问 → 双门计划（先内容、后切片）→ 逐切片构建 → 双轴评审 |
+| **micro** | 错别字、文案等局部低风险改动 | 直接修改并做必要验证；不能只按代码行数判断 |
+| **standard**（默认） | 范围明确的功能、修复和重构 | 检查代码 → 确认重要决策 → 批准一份计划 → 分切片实现和验证 → 评审 |
+| **full** | 跨会话、多依赖或存在重大不确定性 | 先批计划内容，再批切片和依赖；分阶段实现和评审 |
 
-门槛是刻意设计的：standard 只收 **一次** 批准（计划在一次交互里覆盖接缝、切片粒度与阻塞边）；full 收 **两次**（先批计划内容，再批切片拆分）。环境事实永远不会以问题的形式回到你这里 — 只有决策会，且每条都附推荐答案。
+standard 通常只需 **一次** 批准计划；full 分两次确认计划内容和切片。代理自行查询可获取的环境事实，只询问会影响范围、行为或风险的重要决策，并给出建议。鉴权、资金、迁移和数据完整性相关改动至少采用 standard，不以代码行数降档。
 
 底下的四个阶段：
 
@@ -34,8 +34,8 @@
 | --- | --- | --- |
 | 1 | `stages/interview.md` | 并行探索代码库，然后进行设计树访谈 — 不落盘任何东西 |
 | 2 | `stages/plan.md` | 把决策综合成计划文件（故事、接缝、带 `Verify:` 行的切片）— 一次批准，full 模式则两道门 |
-| 3 | `stages/implement.md` | 按预定接缝逐切片测试先行构建，每个切片一次提交，随手勾掉计划项 |
-| 4 | `stages/code-review.md` | 双轴评审（编码规范 + 计划还原度），最后交给你一份验收清单签字 |
+| 3 | `stages/implement.md` | 按切片实现并验证，记录进度；只有获得授权才提交 |
+| 4 | `stages/code-review.md` | 检查规范与正确性、需求与实际行为，提供带证据的验收清单 |
 
 入口文件（`SKILL.md`）负责选档与路由；阶段规则只存在于 `stages/`。阶段文件是普通 Markdown 文档，不是注册技能。
 
@@ -52,12 +52,12 @@ zengbohan-skill · 档位：standard（一次批准，然后开工）
 ▍ 计划   .scratch/2026-09-30-citation-tracing.md — 3 个切片，
          各带 Verify: 行 · 批准后继续 (y/n)
 ▍ 实现   切片 1/3：生成器接缝先写失败测试 → 实现 →
-         提交 …… 切片 2-3 同样处理，随手勾掉计划项
+         逐个验证；只有计划获准时才提交
 ▍ 评审   双轴评审（规范 + 计划还原度）→ 验收清单
          交回给你签字
 ```
 
-技能在回复第一行报出档位。决策点始终由你掌控：访谈轮次停下来等你的回答，计划文件只有在你批准后才会写出。访谈与计划共享同一个上下文窗口，让设计思考保持连贯；实现默认在同一会话继续，只在上下文吃紧时才拆分。
+技能在回复第一行说明档位和原因。它先写计划草稿，再请你批准；重要决策会等你确认，常规实现选择则继续推进。计划记录实现、验证、提交状态、证据和下一步，方便中断后恢复。评审也会检查任务相关的未提交改动。
 
 ## 技术栈
 
@@ -66,6 +66,7 @@ zengbohan-skill · 档位：standard（一次批准，然后开工）
 | 组成 | 说明 |
 | --- | --- |
 | `SKILL.md` | 入口 — 档位分发、路由、退出条件（YAML frontmatter：`name`、`description`） |
+| `agents/openai.yaml` | Codex 技能选择器信息和显式调用策略 |
 | `stages/*.md` | 四个阶段定义（规则只在这里） |
 | `references/*.md` | 阶段引用的操作手册 |
 | 遵循约定 | [Agent Skills](https://agentskills.io) — 任何扫描技能目录的宿主都会自动发现它 |
@@ -90,23 +91,15 @@ git clone https://github.com/zeng-bohan/zengbohan-skill.git ~/.claude/skills/zen
 git clone https://github.com/zeng-bohan/zengbohan-skill.git ~/.zcode/skills/zengbohan-skill
 ```
 
-### Codex CLI
+### Codex
 
-Codex 没有原生的技能目录，通过 `AGENTS.md` 接入：
+把整个文件夹安装到 Codex 的用户技能目录，再通过技能选择器或 `$zengbohan-skill` 显式调用：
 
 ```bash
-git clone https://github.com/zeng-bohan/zengbohan-skill.git ~/.codex/zengbohan-skill
+git clone https://github.com/zeng-bohan/zengbohan-skill.git ~/.agents/skills/zengbohan-skill
 ```
 
-然后把这段加进 `~/.codex/AGENTS.md`（或仓库级 `AGENTS.md`）：
-
-```markdown
-## Development workflow
-
-When the user invokes the zengbohan-skill pipeline (e.g. "/zengbohan-skill <task>"),
-first read ~/.codex/zengbohan-skill/SKILL.md and follow its three-tier pipeline,
-loading the stage files it references under stages/.
-```
+随附的 `agents/openai.yaml` 会关闭隐式调用。不支持技能发现的宿主，则在指令中配置为仅在用户显式调用时读取 `SKILL.md` 和其引用的阶段文件。
 
 ### 其他宿主
 
@@ -125,12 +118,16 @@ Cursor rules、Windsurf、Cline、opencode，任何能注入指令的宿主都�
 /zengbohan-skill 给 RAG 问答链路加上引用溯源
 ```
 
+请求中可以写明需求、验收要求和执行限制，例如“不要提交或推送”。默认使用 standard；跨会话任务可指定 full。普通开发请求不会自动触发本技能。
+
 ## 注意事项与避坑
 
 - **只认显式调用。** 技能不会在「develop」「按流程走」这类自然语言触发词上自动启动 — 想走流水线，请按名字调用。
 - **装完要重启。** 技能没有立即出现的话，重启或刷新你的宿主。
 - **Windows 路径。** 把上面所有路径里的 `~/` 换成 `%USERPROFILE%\`。
 - **一个产物，不是一堆文书。** 流水线只产出唯一一个文件 — `.scratch/` 下的计划；其余都在对话里。没有术语表、ADR、规格文档或票务清单。
+- **授权边界清楚。** 批准计划本身不代表授权提交、推送、部署或写入线上数据库。
+- **验收看证据。** 本地检查不能替代所需的部署、联调或设备验收。
 - **注册的技能只有一个。** 只有顶层 `SKILL.md` 叫这个名字；阶段文件是普通 Markdown，宿主只会注册一个技能。
 - **上游技能不内嵌。** `triage`、`prototype`、`pr`、`diagnosing-bugs`、`wayfinder`、`wizard` 等持续增长的 mattpocock 技能刻意不收 — 需要就从 [mattpocock/skills](https://github.com/mattpocock/skills) 安装。
 
@@ -139,6 +136,8 @@ Cursor rules、Windsurf、Cline、opencode，任何能注入指令的宿主都�
 ```text
 zengbohan-skill/          ← 仓库即技能；把这个文件夹克隆进技能目录
 ├── SKILL.md              ← 入口 — 档位分发 + 路由 + 退出条件
+├── agents/
+│   └── openai.yaml       ← Codex 技能选择器信息和调用策略
 ├── AGENTS.md
 ├── LICENSE
 ├── docs/

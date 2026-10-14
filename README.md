@@ -18,15 +18,15 @@
 
 ## What it does
 
-`zengbohan-skill` is a single entry point for development work — one pipeline, two depths. Every feature runs the same four stages; the tier you pick decides how deep each stage goes, so ceremony scales with the work instead of dwarfing it.
+`zengbohan-skill` is an explicitly invoked workflow for features, fixes, and refactors. Its tier scales with risk and complexity, so the process stays proportional to the work.
 
 | Tier | When | What runs |
 | --- | --- | --- |
-| **micro** | typo, copy tweak, one-line fix | fixed directly, no pipeline |
-| **standard** (default) | fits one context window / one sitting | parallel repo exploration → one-round interview → one-pager plan with a **single approval** → in-session TDD build → one review pass |
-| **full** | spans sessions or days | multi-round grilling → two-gate plan (content, then slices) → per-slice build → two-axis review |
+| **micro** | local, low-risk changes such as a typo or copy tweak | fix directly and verify proportionately; line count alone does not qualify |
+| **standard** (default) | bounded features, fixes, and refactors | inspect the code → settle material decisions → one approved plan → verified slices → review |
+| **full** | work spanning sessions, dependent deliverables, or major uncertainty | approve plan content, then slices and dependencies → implement and review in resumable stages |
 
-Gates, deliberately: standard takes **one** approval (the plan covers seams, slice granularity, and blocking edges in one exchange); full takes **two** (the plan's content, then its slice breakdown). Environment facts never come back to you as questions — only decisions do, each with a recommended answer.
+Standard normally has **one** plan approval; full has **two** (plan content, then its slice breakdown). The agent looks up available environment facts and asks only about material decisions, with a recommendation. High-risk work such as authorization, money, migrations, or data integrity is at least standard regardless of size.
 
 The stages underneath:
 
@@ -34,8 +34,8 @@ The stages underneath:
 | --- | --- | --- |
 | 1 | `stages/interview.md` | Parallel codebase exploration, then a design-tree interview — nothing written down |
 | 2 | `stages/plan.md` | Synthesize the decisions into the plan file (stories, seams, slices with `Verify:` lines) — one approval, or two gates in full mode |
-| 3 | `stages/implement.md` | Build each slice test-first at the pre-agreed seams, one commit each, ticking the plan as you go |
-| 4 | `stages/code-review.md` | Two-axis review (coding standards + plan fidelity), then an acceptance checklist handed to you for sign-off |
+| 3 | `stages/implement.md` | Implement and verify slices; record progress and commit only under the agreed authorization |
+| 4 | `stages/code-review.md` | Review standards and correctness, then plan and behaviour; finish with evidence-backed acceptance |
 
 The entry file (`SKILL.md`) picks the tier and routes; stage rules live only in `stages/`. Stage files are ordinary Markdown documents, not registered skills.
 
@@ -52,12 +52,12 @@ zengbohan-skill · tier: standard (one approval, then build)
 ▍ Plan        .scratch/2026-09-30-citation-tracing.md — 3 slices, each
               with a Verify: line · approve to continue (y/n)
 ▍ Implement   slice 1/3: failing test at the generator seam → code →
-              commit … slices 2-3 likewise, plan ticked as we go
+              verify each slice; commit only if the plan authorizes it
 ▍ Review      two-axis pass (standards + plan fidelity) → acceptance
               checklist handed back for your sign-off
 ```
 
-The skill announces its tier in the first line of its reply. You stay in control at the decision points: interview rounds pause for your answers, and the plan file is written only after you approve it. Interview and plan share one context window so the design thinking stays connected; implementation continues in the same session by default and only splits when the context runs low.
+The skill announces its tier and reason in the first line. It writes a plan draft before asking for approval; material decisions pause for your input, while routine implementation choices proceed. The plan tracks implementation, verification, commit state, evidence, and the next step so work can resume after an interruption. Review includes task-owned working-tree changes as well as commits.
 
 ## Tech stack
 
@@ -66,6 +66,7 @@ No runtime, no build step, no dependencies — the skill is plain Markdown plus 
 | Piece | What it is |
 | --- | --- |
 | `SKILL.md` | Entry point — tier dispatch, routing, exit conditions (YAML frontmatter: `name`, `description`) |
+| `agents/openai.yaml` | Codex skill picker metadata and explicit-only invocation policy |
 | `stages/*.md` | The four stage definitions (rules live here, nowhere else) |
 | `references/*.md` | Operational recipes the stages point at |
 | Convention | [Agent Skills](https://agentskills.io) — any harness that scans a skills directory discovers it automatically |
@@ -90,23 +91,15 @@ git clone https://github.com/zeng-bohan/zengbohan-skill.git ~/.claude/skills/zen
 git clone https://github.com/zeng-bohan/zengbohan-skill.git ~/.zcode/skills/zengbohan-skill
 ```
 
-### Codex CLI
+### Codex
 
-Codex has no native skills directory, so wire it in through `AGENTS.md`:
+Install the folder in Codex's user skills directory, then invoke it explicitly with the skill picker or `$zengbohan-skill`:
 
 ```bash
-git clone https://github.com/zeng-bohan/zengbohan-skill.git ~/.codex/zengbohan-skill
+git clone https://github.com/zeng-bohan/zengbohan-skill.git ~/.agents/skills/zengbohan-skill
 ```
 
-Then add this block to `~/.codex/AGENTS.md` (or the repo-level `AGENTS.md`):
-
-```markdown
-## Development workflow
-
-When the user invokes the zengbohan-skill pipeline (e.g. "/zengbohan-skill <task>"),
-first read ~/.codex/zengbohan-skill/SKILL.md and follow its three-tier pipeline,
-loading the stage files it references under stages/.
-```
+The included `agents/openai.yaml` disables implicit invocation. For a harness without skill discovery, point its instructions at `SKILL.md` and load the referenced stage files only when the user explicitly invokes the pipeline.
 
 ### Any other harness
 
@@ -125,12 +118,16 @@ This works for Cursor rules, Windsurf, Cline, opencode, or anything that can inj
 /zengbohan-skill Add citation tracing to the RAG answer pipeline
 ```
 
+Include relevant requirements and execution constraints in the request. For example: `Do not commit or push.` The default tier is standard; specify `full` for multi-session work. Generic development requests do not automatically activate the skill.
+
 ## Notes and gotchas
 
 - **Explicit invocation only.** The skill never fires on natural-language triggers like "develop" or 按流程走 — if you want the pipeline, call it by name.
 - **Restart after install.** If the skill does not appear immediately, restart or refresh your harness.
 - **Windows paths.** Replace `~/` with `%USERPROFILE%\` in every path above.
 - **One artifact, not a paper trail.** The pipeline produces exactly one file — the plan under `.scratch/` — and the conversation carries everything else. No glossaries, ADRs, specs, or ticket lists.
+- **Authorization stays explicit.** Plan approval does not by itself authorize commits, pushes, deployment, or live database writes.
+- **Acceptance follows evidence.** Local checks do not stand in for required deployment, integration, or device acceptance.
 - **Exactly one registered skill.** Only the top-level `SKILL.md` is named `SKILL.md`; stage files are ordinary Markdown, so harnesses register exactly one skill.
 - **Upstream skills are not embedded.** `triage`, `prototype`, `pr`, `diagnosing-bugs`, `wayfinder`, `wizard` and the rest of the growing mattpocock suite are deliberately out — install them from [mattpocock/skills](https://github.com/mattpocock/skills) if you want them.
 
@@ -139,6 +136,8 @@ This works for Cursor rules, Windsurf, Cline, opencode, or anything that can inj
 ```text
 zengbohan-skill/          ← the repo IS the skill; clone this folder into a skills directory
 ├── SKILL.md              ← entry point — tier dispatch + routing + exit conditions
+├── agents/
+│   └── openai.yaml       ← Codex skill picker metadata and invocation policy
 ├── AGENTS.md
 ├── LICENSE
 ├── docs/

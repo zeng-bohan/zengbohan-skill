@@ -1,65 +1,46 @@
----
-name: plan
-description: Synthesize settled decisions into a plan file — the pipeline's only durable artifact. One approval (standard) or two gates, content then slice breakdown (full). No interview; pure synthesis of what you already discussed.
----
-
 # Plan
 
-Take the current conversation and codebase understanding and turn them into a plan. Do NOT interview the user — just synthesize what you already know. Use the vocabulary settled in the interview throughout. Explore the repo first if you haven't already.
+Synthesize the settled requirements and inspected code. Do not restart the interview; if a newly discovered fact invalidates a material decision, surface only that decision.
 
-In both modes, sketch the **seams** at which the feature will be tested: prefer existing seams over new ones, the highest seam possible, the fewest total (the ideal is one). Seams are confirmed as part of the plan approval — no separate sign-off.
+Write the draft to `.scratch/<feature-slug>/plan.md` before presenting it for approval. Update this one file through planning, implementation, review, and resumption. Keep it concise; include stable module names, APIs, and useful file paths as navigation hints, verified again on resume. Avoid speculative implementation listings.
 
-Avoid specific file paths or code snippets — they go stale fast. Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it and note briefly that it came from a prototype. Decision-rich parts only — not a working demo.
+## Plan template
 
-## The plan file
+### Problem & acceptance
 
-Write the plan to `.scratch/<feature-slug>/plan.md` (create the directory if needed). This file is the pipeline's **only durable artifact**: it is what a fresh session resumes from, what implement ticks off slice by slice, and what code-review reads later. Present its contents in the conversation and iterate by editing the file. Everything else — reasoning, rejected options, vocabulary debates — stays in the conversation.
+Describe the problem and 2–4 relevant stories, or fewer for a narrow fix. Give observable success conditions and material failure cases. Distinguish local verification from deployment, integration, or device acceptance when those are required.
 
-<plan-template>
+### Decisions & assumptions
 
-## Problem & Stories
+Record scope, canonical terms, interface/schema changes, material technical choices and their reasons. List assumptions and risks still requiring verification.
 
-The problem, from the user's perspective, in a sentence or two — then 2–4 user stories in the form "As an <actor>, I want <feature>, so that <benefit>". This is what final acceptance checks against.
+### Execution policy
 
-## Decisions
+Record repository/worktree, branch, starting HEAD SHA when Git is available, relevant pre-existing changes, and review scope. Record the user's existing permissions and restrictions. Commit mode: leave uncommitted by default unless already authorized; otherwise per-slice or final commit as agreed. Push, merge, deployment, and live database operations require their own applicable authorization. Do not ask again for authorization already given.
 
-The settled implementation decisions: modules built/modified, interface changes, schema changes, API contracts, architectural choices, technical clarifications — and the canonical terms the interview settled, so the vocabulary survives into later sessions.
+### Verification
 
-## Seams
+Prefer existing public boundaries. Choose the smallest set that covers behaviour and material risks, including lower-level integration checks when appropriate. Record related tests per slice, the final check set, and any unavailable environment checks. Coverage matters more than minimizing the number of seams. New routine tests within the agreed strategy need no extra approval.
 
-The seams agreed for testing, and what each covers.
+### Slices
 
-## Slices
+Number slices in dependency order. For each include:
 
-One checkbox per slice, numbered in dependency order (blockers first). For each slice:
+- **S1 — title**; blockers: none or earlier slices; delivers: observable behaviour; verify: command/interaction and expected result; status: pending / implemented / verified; commit: SHA or uncommitted.
 
-- [ ] **S1 — <Title>** · **Blocked by**: S2, or "None — can start immediately" · **Delivers**: the end-to-end behaviour this slice makes work, from the user's perspective — not a layer-by-layer implementation list · **Verify**: the one command or interaction that shows it works
+Prefer narrow end-to-end slices through the layers actually involved, each independently verifiable. Do not invent UI or schema work for a backend-only change. For wide mechanical refactors, use expand–migrate–contract; record any shared integration checkpoint when batches cannot remain green independently.
 
-Each slice is a **tracer bullet**: a narrow but complete path through every layer (schema, API, UI, tests), demoable or verifiable on its own, sized to fit in one context window.
+### Out of scope
 
-**Wide refactors are the exception to vertical slicing.** A **wide refactor** is one mechanical change — rename a column, retype a shared symbol — whose blast radius fans across the whole codebase, so a single edit breaks thousands of call sites at once and no vertical slice can land green. Don't force it into a tracer bullet; sequence it as **expand–contract**. First expand: add the new form beside the old so nothing breaks. Then migrate the call sites over in batches sized by blast radius (per package, per directory), each batch its own slice blocked by the expand, keeping CI green batch to batch because the old form still exists. Finally contract: delete the old form once no caller remains, in a slice blocked by every migrate batch. When even the batches can't stay green alone, keep the sequence but let them share an integration branch that all block a final integrate-and-verify slice — green is promised only there.
+State the boundaries needed to prevent scope creep.
 
-## Out of Scope
+### Execution state
 
-What this plan deliberately does not touch.
+Keep current phase, latest verified result, unresolved blockers, plan changes, next action, and acceptance status (pending / accepted) here. Add evidence and commit SHAs as work progresses. One checkbox must not imply implementation, verification, commit, and user acceptance simultaneously.
 
-</plan-template>
+## Approval gates
 
-## Standard mode — one gate
+- **standard:** present one concrete draft covering scope, decisions, verification, slices, and execution policy. Ask for approval once unless already explicitly approved. Update only the parts the user changes.
+- **full:** first approve content and verification, then add and approve slices/dependencies in the same file. Reuse existing approval when it covers the presented decision.
 
-Present the plan once and ask one question: does this look right — problem, stories, seams, slice granularity, and blocking edges? Iterate on whatever they push back on, then proceed. **This single exchange is the only gate** — do not re-ask piecemeal afterwards.
-
-## Full mode — two gates, one file
-
-Full mode is for work that will span sessions or days. Nothing new is published — the same plan file is walked in two passes, giving multi-session work an extra steering point before any code moves:
-
-1. **Content gate.** Present problem, stories, decisions, seams, and out of scope (leave Slices blank for now). Iterate until settled.
-2. **Slice gate.** Fill in the Slices section, present it, and quiz the user:
-
-   - Does the granularity feel right? (too coarse / too fine)
-   - Are the blocking edges correct — does each slice only depend on slices that genuinely gate it?
-   - Should any slices be merged or split further?
-
-   Iterate until approved.
-
-The approved plan file is the whole contract — there is no tracker, no spec, and no separate ticket files to keep in sync.
+Material changes after approval follow the controlled-change rules in `implement.md`; local engineering choices do not create new gates.

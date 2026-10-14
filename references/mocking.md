@@ -7,7 +7,7 @@ Mock at **system boundaries** only:
 - Time/randomness
 - File system (sometimes)
 
-Don't mock:
+Avoid mocking your own internals merely to assert implementation calls:
 
 - Your own classes/modules
 - Internal collaborators
@@ -57,3 +57,5 @@ The SDK approach means:
 - No conditional logic in test setup
 - Easier to see which endpoints a test exercises
 - Type safety per endpoint
+
+A test database is required when the claim concerns real SQL, persistence, transactions, or constraints. A mocked database verifies only the caller behaviour and cannot establish those properties. Test doubles for expensive boundaries are acceptable; document what remains unverified.

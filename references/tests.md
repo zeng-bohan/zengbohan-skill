@@ -24,7 +24,7 @@ Characteristics:
 
 ## Bad Tests
 
-**Implementation-detail tests**: Coupled to internal structure.
+**Implementation-detail tests**: Coupled to internal structure. Direct database assertions are valid when persistence, constraints, or transactions are the requirement; the examples below concern ordinary retrievability.
 
 ```typescript
 // BAD: Tests implementation details
@@ -42,17 +42,17 @@ Red flags:
 - Asserting on call counts/order
 - Test breaks when refactoring without behavior change
 - Test name describes HOW not WHAT
-- Verifying through external means instead of interface
+- Using a side channel unrelated to the behaviour or persistence contract being tested
 
 ```typescript
-// BAD: Bypasses interface to verify
+// LESS SUITABLE: Tests storage existence when the requirement is retrievability
 test("createUser saves to database", async () => {
   await createUser({ name: "Alice" });
   const row = await db.query("SELECT * FROM users WHERE name = ?", ["Alice"]);
   expect(row).toBeDefined();
 });
 
-// GOOD: Verifies through interface
+// GOOD: Verifies the required retrievability through the interface
 test("createUser makes user retrievable", async () => {
   const user = await createUser({ name: "Alice" });
   const retrieved = await getUser(user.id);
